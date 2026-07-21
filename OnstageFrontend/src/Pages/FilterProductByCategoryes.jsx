@@ -60,11 +60,16 @@ export default function FilterProductByCategoryes() {
 
         const data = await res.json();
 
-        setProducts(data.products || []);
+        setProducts(data.products);
 
-        setAllBrands(data.brandCount || {});
+        // Sirf pehli baar saare brands save karo
+        if (Object.keys(allBrands).length === 0) {
+          setAllBrands(data.brandCount || {});
+        }
 
-        setAllCategories(data.categoryWithSubCategories || {});
+        if (Object.keys(allCategories).length === 0) {
+          setAllCategories(data.categoryWithSubCategories || {});
+        }
 
         setTotalPages(Number(data.totalPages) || 1);
         setCurrentPage(page);
@@ -354,12 +359,13 @@ export default function FilterProductByCategoryes() {
                         MRP ₹{mrp.toLocaleString("en-IN")}
                       </span>
 
-                      {Number(item.totalReviews) > 0 && Number(item.averageRating) > 0 && (
-                        <span className="ecom-rating">
-                          <FaStar className="rating-star" />
-                          {Number(item.averageRating).toFixed(1)} ({item.totalReviews})
-                        </span>
-                      )}
+                      {Number(item.totalReviews) > 0 &&
+                        Number(item.averageRating) > 0 && (
+                          <span className="ecom-rating">
+                            <FaStar className="rating-star" />
+                            {Number(item.averageRating).toFixed(1)} ({item.totalReviews})
+                          </span>
+                        )}
 
                       {cutPrice > mrp && (
                         <span className="ecom-old-price">
@@ -400,4 +406,3 @@ export default function FilterProductByCategoryes() {
     </section>
   );
 }
-
