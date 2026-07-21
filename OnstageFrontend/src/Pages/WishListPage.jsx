@@ -3,6 +3,7 @@ import { removeFromWishlist } from "../Redux/Slices/WishlistSlice";
 import { addToCart } from "../Redux/Slices/CartSlice";
 import { useNavigate } from "react-router-dom";
 import { MdDelete } from "react-icons/md";
+import { FaStar } from "react-icons/fa";
 
 export default function WishlistPage() {
   const wishlistItems = useSelector(
@@ -169,10 +170,17 @@ export default function WishlistPage() {
                   </p>
                   <div className="ecom-price-box">
                     <span className="ecom-price">
-                      ₹{mrp.toLocaleString("en-IN")}
+                      MRP ₹{mrp.toLocaleString("en-IN")}
                     </span>
 
-                    {price > 0 && price !== mrp && (
+                    {Number(item.totalReviews || 0) > 0 && (
+                      <span className="ecom-rating">
+                        <FaStar className="rating-star" />
+                        {Number(item.averageRating || 0).toFixed(1)} ({item.totalReviews})
+                      </span>
+                    )}
+
+                    {price > mrp && (
                       <span className="ecom-old-price">
                         ₹{price.toLocaleString("en-IN")}
                       </span>

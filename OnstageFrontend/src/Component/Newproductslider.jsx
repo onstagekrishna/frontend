@@ -3,6 +3,8 @@ import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import { IoIosHeart, IoIosHeartEmpty } from "react-icons/io";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
+
+
 import {
   addToWishlist,
   removeFromWishlist,
@@ -228,8 +230,22 @@ function Newproductslider() {
                       <p className="ecom-model">Model - {item.Model_number}</p>
                       <p className="ecom-type">{category}</p>
                       <div className="ecom-price-box">
-                        <span className="ecom-price">₹{formatPrice(price)}</span>
-                        <span className="ecom-old-price">₹{formatPrice(oldPrice)}</span>
+                        <span className="ecom-price">
+                          MRP ₹{formatPrice(price)}
+                        </span>
+
+                        {Number(item.totalReviews) > 0 && (
+                          <span className="ecom-rating">
+                            <FaStar className="rating-star" />
+                            {Number(item.averageRating).toFixed(1)} ({item.totalReviews})
+                          </span>
+                        )}
+
+                        {oldPrice > price && (
+                          <span className="ecom-old-price">
+                            ₹{formatPrice(oldPrice)}
+                          </span>
+                        )}
                       </div>
                     </div>
                   </div>

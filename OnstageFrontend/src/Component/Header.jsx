@@ -25,16 +25,14 @@ const productBrands = [
 ];
 
 const productCategories = [
-  "Effects",
-  "Guitars",
+  "Drums & Drums Accessories",
+  "Effects & Pedals",
   "Accessories",
   "Ukuleles",
+  "Guitars",
+  "Piano & Keyboards",
+  "Pro Audio & Studio",
   "Amplifiers",
-  "Pro Audio and Studio",
-  "Pianos and Keyboards",
-  "Drums and Drum Accessories",
-  "Professional Audios",
-  "Harmonica",
 ];
 
 function Header() {

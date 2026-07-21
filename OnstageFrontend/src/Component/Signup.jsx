@@ -27,12 +27,12 @@ export default function Signup() {
       !password.trim() ||
       !confirmPassword.trim()
     ) {
-      alert("Please fill all fields");
+      window.showNotification?.("Please fill all fields", "error");
       return;
     }
 
     if (password !== confirmPassword) {
-      alert("Passwords do not match ❌");
+      window.showNotification?.("Passwords do not match", "error");
       return;
     }
 
@@ -53,7 +53,7 @@ export default function Signup() {
       console.log("OTP Response:", data);
 
       if (!response.ok || !data.success) {
-        alert(data.message || "Failed to send OTP ❌");
+        window.showNotification?.(data.message || "Failed to send OTP", "error");
         return;
       }
 
@@ -71,11 +71,11 @@ export default function Signup() {
         })
       );
 
-      alert("OTP sent successfully ✅");
+      window.showNotification?.("OTP sent successfully", "success");
       navigate("/verify-otp");
     } catch (err) {
       console.log(err);
-      alert("Network error ❌");
+      window.showNotification?.("Network error", "error");
     } finally {
       setLoading(false);
     }
@@ -122,10 +122,33 @@ export default function Signup() {
           />
 
           <input
-            type="text"
+            type="tel"
             placeholder="Mobile Number"
             value={contactNumber}
-            onChange={(e) => setContactNumber(e.target.value)}
+            maxLength={10}
+            inputMode="numeric"
+            pattern="[0-9]*"
+            onChange={(e) => {
+              // Sirf numbers allow honge
+              const value = e.target.value.replace(/\D/g, "");
+              setContactNumber(value.slice(0, 10));
+            }}
+            onKeyDown={(e) => {
+              const allowedKeys = [
+                "Backspace",
+                "Delete",
+                "ArrowLeft",
+                "ArrowRight",
+                "Tab",
+              ];
+
+              if (
+                !/[0-9]/.test(e.key) &&
+                !allowedKeys.includes(e.key)
+              ) {
+                e.preventDefault();
+              }
+            }}
           />
 
           <div className="password-field">

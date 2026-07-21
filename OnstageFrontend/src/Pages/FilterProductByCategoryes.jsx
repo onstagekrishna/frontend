@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { addToWishlist, removeFromWishlist } from "../Redux/Slices/WishlistSlice";
 import { IoIosHeart, IoIosHeartEmpty } from "react-icons/io";
 import { IoChevronDown, IoChevronForward } from "react-icons/io5";
+import { FaStar } from "react-icons/fa";
 
 export default function FilterProductByCategoryes() {
 
@@ -59,16 +60,11 @@ export default function FilterProductByCategoryes() {
 
         const data = await res.json();
 
-        setProducts(data.products);
+        setProducts(data.products || []);
 
-        // Sirf pehli baar saare brands save karo
-        if (Object.keys(allBrands).length === 0) {
-          setAllBrands(data.brandCount || {});
-        }
+        setAllBrands(data.brandCount || {});
 
-        if (Object.keys(allCategories).length === 0) {
-          setAllCategories(data.categoryWithSubCategories || {});
-        }
+        setAllCategories(data.categoryWithSubCategories || {});
 
         setTotalPages(Number(data.totalPages) || 1);
         setCurrentPage(page);
@@ -358,6 +354,13 @@ export default function FilterProductByCategoryes() {
                         MRP ₹{mrp.toLocaleString("en-IN")}
                       </span>
 
+                      {Number(item.totalReviews) > 0 && Number(item.averageRating) > 0 && (
+                        <span className="ecom-rating">
+                          <FaStar className="rating-star" />
+                          {Number(item.averageRating).toFixed(1)} ({item.totalReviews})
+                        </span>
+                      )}
+
                       {cutPrice > mrp && (
                         <span className="ecom-old-price">
                           ₹{cutPrice.toLocaleString("en-IN")}
@@ -397,3 +400,4 @@ export default function FilterProductByCategoryes() {
     </section>
   );
 }
+

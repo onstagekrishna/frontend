@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { FaArrowRight } from "react-icons/fa";
+import { FaArrowRight, FaStar } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
 import { addToWishlist, removeFromWishlist } from "../Redux/Slices/WishlistSlice";
 import { IoIosHeart, IoIosHeartEmpty } from "react-icons/io";
@@ -289,9 +289,18 @@ const AllProducts = () => {
                           MRP ₹{formatPrice(mrp)}
                         </span>
 
-                        <span className="ecom-old-price">
-                          ₹{formatPrice(cutPrice)}
-                        </span>
+                        {Number(item.totalReviews || 0) > 0 && (
+                          <span className="ecom-rating">
+                            <FaStar className="rating-star" />
+                            {Number(item.averageRating || 0).toFixed(1)} ({item.totalReviews})
+                          </span>
+                        )}
+
+                        {cutPrice > mrp && (
+                          <span className="ecom-old-price">
+                            ₹{formatPrice(cutPrice)}
+                          </span>
+                        )}
                       </div>
 
                     </div>

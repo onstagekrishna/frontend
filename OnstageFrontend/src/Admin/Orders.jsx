@@ -49,21 +49,26 @@ export default function Orders() {
 
 
         setPaidOrders(
-          paidData.orders ||
-          paidData.data ||
-          paidData.paidOrders ||
-          paidData.order ||
-          []
+          (
+            paidData.orders ||
+            paidData.data ||
+            paidData.paidOrders ||
+            paidData.order ||
+            []
+          ).sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
         );
 
         setPendingOrders(
-          pendingData.orders ||
-          pendingData.data ||
-          pendingData.pendingOrders ||
-          pendingData.order ||
-          pendingData.pendingOrder ||
-          []
+          (
+            pendingData.orders ||
+            pendingData.data ||
+            pendingData.pendingOrders ||
+            pendingData.order ||
+            pendingData.pendingOrder ||
+            []
+          ).sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
         );
+
       } catch (error) {
         console.error("Orders error:", error);
       } finally {

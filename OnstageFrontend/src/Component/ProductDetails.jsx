@@ -1,5 +1,5 @@
 import { useLocation, useParams, Link } from "react-router-dom";
-import { FaCartPlus } from "react-icons/fa";
+import { FaCartPlus, FaStar } from "react-icons/fa";
 import { IoIosHeart, IoIosHeartEmpty } from "react-icons/io";
 import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -30,6 +30,8 @@ export default function ProductDetails() {
 
   const [showToast, setShowToast] = useState(false);
   const [toastMsg, setToastMsg] = useState("");
+
+  const [showFullDescription, setShowFullDescription] = useState(false);
 
   const formatPrice = (value) => {
     return Math.round(Number(value || 0)).toLocaleString("en-IN");
@@ -385,6 +387,14 @@ export default function ProductDetails() {
             <span className="pro-price">
               ₹{formatPrice(productDetails?.MRP)}
             </span>
+
+            {Number(productDetails.totalReviews || 0) > 0 && (
+              <span className="ecom-rating">
+                <FaStar className="rating-star" />
+                {Number(productDetails.averageRating || 0).toFixed(1)} (
+                {productDetails.totalReviews})
+              </span>
+            )}
           </div>
 
           <div className="pro-quantity">
@@ -444,7 +454,19 @@ export default function ProductDetails() {
 
           <div className="pro-description">
             <h3>Description</h3>
-            <p>{productDetails.Product_Discripction}</p>
+
+            <p className={showFullDescription ? "description expanded" : "description"}>
+              {productDetails.Product_Discripction}
+            </p>
+
+            {productDetails.Product_Discripction?.length > 180 && (
+              <button
+                className="read-more-btn"
+                onClick={() => setShowFullDescription(!showFullDescription)}
+              >
+                {showFullDescription ? "Read Less" : "Read More"}
+              </button>
+            )}
           </div>
         </div>
       </div>
@@ -561,19 +583,23 @@ export default function ProductDetails() {
                       </p>
 
                       <div className="ecom-price-box">
-                        <div className="ecom-price-box">
+                        <span className="ecom-price">
+                          MRP ₹{Math.round(Number(item.MRP || 0)).toLocaleString("en-IN")}
+                        </span>
 
-                          <span className="ecom-price">
-                            ₹{Math.round(Number(item.MRP || 0)).toLocaleString("en-IN")}
+                        {Number(item.totalReviews || 0) > 0 && (
+                          <span className="ecom-rating">
+                            <FaStar className="rating-star" />
+                            {Number(item.averageRating || 0).toFixed(1)} (
+                            {item.totalReviews})
                           </span>
+                        )}
 
-                          {Number(item.Product_price || 0) > Number(item.MRP || 0) && (
-                            <span className="ecom-old-price">
-                              ₹{Math.round(Number(item.Product_price || 0)).toLocaleString("en-IN")}
-                            </span>
-                          )}
-
-                        </div>
+                        {Number(item.Product_price || 0) > Number(item.MRP || 0) && (
+                          <span className="ecom-old-price">
+                            ₹{Math.round(Number(item.Product_price || 0)).toLocaleString("en-IN")}
+                          </span>
+                        )}
                       </div>
                     </div>
                   </Link>

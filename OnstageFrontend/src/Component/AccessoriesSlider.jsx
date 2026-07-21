@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { IoIosHeart, IoIosHeartEmpty } from "react-icons/io";
 import { MdKeyboardArrowLeft, MdKeyboardArrowRight } from "react-icons/md";
+import { FaStar } from "react-icons/fa";
 import { addToWishlist, removeFromWishlist } from "../Redux/Slices/WishlistSlice";
 
 const accessoryWords = [
@@ -151,133 +152,145 @@ export default function AccessoriesSlider() {
   if (!products.length) return null;
 
   return (
-<section className="acc-home-section">
+    <section className="acc-home-section">
 
-  <div className="site-container">
+      <div className="site-container">
 
-    <div className="acc-home-container">
+        <div className="acc-home-container">
 
-        {/* Heading */}
-        <div className="acc-section-header">
-          <h2 className="acc-section-heading">
-            ACCESSORIES
-          </h2>
+          {/* Heading */}
+          <div className="acc-section-header">
+            <h2 className="acc-section-heading">
+              ACCESSORIES
+            </h2>
 
-          <p className="acc-section-tagline">
-            Discover essential music gear and accessories for every musician.
-          </p>
-        </div>
-
-        <div
-          className="acc-home-slider-wrap"
-          onMouseEnter={() => setPauseSlider(true)}
-          onMouseLeave={() => setPauseSlider(false)}
-        >
-          <button
-            className="acc-slide-btn acc-left"
-            onClick={() => scrollSlider("left")}
-          >
-            <MdKeyboardArrowLeft />
-          </button>
-
-          <div className="acc-home-slider" ref={sliderRef}>
-            {products.map((item, index) => {
-
-              const productId = getProductId(item);
-
-              const isWishlisted =
-                Array.isArray(wishlistItems) &&
-                wishlistItems.some(
-                  (w) => (w.product_id || w._id || w.id) === productId
-                );
-
-              return (
-                <div
-                  className="acc-home-card"
-                  key={productId || index}
-                  onClick={() => handleProductClick(item)}
-                >
-                  <div className="acc-home-img" style={{ background: "#e3e3e3" }}>
-                    <button
-                      className={`acc-home-wishlist ${isWishlisted ? "active" : ""
-                        }`}
-                      onClick={(e) => {
-                        e.stopPropagation();
-
-                        if (isWishlisted) {
-                          dispatch(removeFromWishlist(productId));
-
-                          window.showNotification(
-                            "Removed from Wishlist",
-                            "info"
-                          );
-                        } else {
-                          dispatch(
-                            addToWishlist({
-                              ...item,
-                              product_id: productId,
-                            })
-                          );
-
-                          window.showNotification(
-                            "Added to Wishlist",
-                            "success"
-                          );
-                        }
-                      }}
-                    >
-                      {isWishlisted ? (
-                        <IoIosHeart />
-                      ) : (
-                        <IoIosHeartEmpty />
-                      )}
-                    </button>
-
-                    <img
-                      src={item.image_01 || item.image || "/no-image.png"}
-                      alt={item.Product_Name || item.name}
-                      style={{ mixBlendMode: "multiply" }}
-                    />
-                  </div>
-
-                  <div className="acc-home-info">
-                    <h5 className="acc-brand">
-                      {item.Brand_Name || "Brand"}
-                    </h5>
-
-                    <p className="acc-model">
-                      Model - {item.Model_number || "N/A"}
-                    </p>
-
-                    <p className="acc-category">
-                      {item.Product_Subcategory}
-                    </p>
-
-                    <div className="acc-home-price">
-
-                      <span className="acc-price">
-                        MRP ₹{Math.floor(Number(item.MRP || 0)).toLocaleString("en-IN")}
-                      </span>
-
-                      <del className="acc-old-price">
-                        ₹{Math.floor(Number(item.Product_price || item.price || 0)).toLocaleString("en-IN")}
-                      </del>
-
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
+            <p className="acc-section-tagline">
+              Discover essential music gear and accessories for every musician.
+            </p>
           </div>
 
-          <button
-            className="acc-slide-btn acc-right"
-            onClick={() => scrollSlider("right")}
+          <div
+            className="acc-home-slider-wrap"
+            onMouseEnter={() => setPauseSlider(true)}
+            onMouseLeave={() => setPauseSlider(false)}
           >
-            <MdKeyboardArrowRight />
-          </button>
+            <button
+              className="acc-slide-btn acc-left"
+              onClick={() => scrollSlider("left")}
+            >
+              <MdKeyboardArrowLeft />
+            </button>
+
+            <div className="acc-home-slider" ref={sliderRef}>
+              {products.map((item, index) => {
+
+                const productId = getProductId(item);
+
+                const isWishlisted =
+                  Array.isArray(wishlistItems) &&
+                  wishlistItems.some(
+                    (w) => (w.product_id || w._id || w.id) === productId
+                  );
+
+                return (
+                  <div
+                    className="acc-home-card"
+                    key={productId || index}
+                    onClick={() => handleProductClick(item)}
+                  >
+                    <div className="acc-home-img" style={{ background: "#e3e3e3" }}>
+                      <button
+                        className={`acc-home-wishlist ${isWishlisted ? "active" : ""
+                          }`}
+                        onClick={(e) => {
+                          e.stopPropagation();
+
+                          if (isWishlisted) {
+                            dispatch(removeFromWishlist(productId));
+
+                            window.showNotification(
+                              "Removed from Wishlist",
+                              "info"
+                            );
+                          } else {
+                            dispatch(
+                              addToWishlist({
+                                ...item,
+                                product_id: productId,
+                              })
+                            );
+
+                            window.showNotification(
+                              "Added to Wishlist",
+                              "success"
+                            );
+                          }
+                        }}
+                      >
+                        {isWishlisted ? (
+                          <IoIosHeart />
+                        ) : (
+                          <IoIosHeartEmpty />
+                        )}
+                      </button>
+
+                      <img
+                        src={item.image_01 || item.image || "/no-image.png"}
+                        alt={item.Product_Name || item.name}
+                        style={{ mixBlendMode: "multiply" }}
+                      />
+                    </div>
+
+                    <div className="acc-home-info">
+                      <h5 className="acc-brand">
+                        {item.Brand_Name || "Brand"}
+                      </h5>
+
+                      <p className="acc-model">
+                        Model - {item.Model_number || "N/A"}
+                      </p>
+
+                      <p className="acc-category">
+                        {item.Product_Subcategory}
+                      </p>
+
+                      <div className="acc-home-price">
+
+                        <span className="acc-price">
+                          MRP ₹{Math.floor(Number(item.MRP || 0)).toLocaleString("en-IN")}
+                        </span>
+
+                        {Number(item.totalReviews || 0) > 0 && (
+                          <span className="ecom-rating">
+                            <FaStar className="rating-star" />
+                            {Number(item.averageRating || 0).toFixed(1)} ({item.totalReviews})
+                          </span>
+                        )}
+
+                        {Number(item.Product_price || item.price || 0) >
+                          Number(item.MRP || 0) && (
+                            <del className="acc-old-price">
+                              ₹{Math.floor(
+                                Number(item.Product_price || item.price || 0)
+                              ).toLocaleString("en-IN")}
+                            </del>
+                          )}
+
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            <button
+              className="acc-slide-btn acc-right"
+              onClick={() => scrollSlider("right")}
+            >
+              <MdKeyboardArrowRight />
+            </button>
+          </div>
         </div>
-    </div>
       </div>
     </section>
   );

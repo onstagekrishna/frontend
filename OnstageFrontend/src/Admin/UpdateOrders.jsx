@@ -46,7 +46,7 @@ export default function UpdateOrders() {
       });
 
       const data = await res.json();
-      console.log("data: ",data);
+      console.log("data: ", data);
 
       if (!res.ok || data.success === false) {
         setOrders([]);
@@ -65,11 +65,14 @@ export default function UpdateOrders() {
               : [];
 
       // Sirf Paid orders
-      const paidOrders = orderList.filter(
-        (order) => String(order.paymentStatus).toLowerCase() === "paid"
-      );
+      const paidOrders = orderList
+        .filter(
+          (order) => String(order.paymentStatus).toLowerCase() === "paid"
+        )
+        .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
       setOrders(paidOrders);
+
       setUsers(Array.isArray(data.users) ? data.users : []);
     } catch (error) {
       console.error("Fetch orders error:", error);

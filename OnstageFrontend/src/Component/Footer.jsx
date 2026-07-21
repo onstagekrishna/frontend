@@ -42,9 +42,9 @@ export default function Footer() {
             <h3>Quick Links</h3>
             <ul>
               <li><Link to="/">Home</Link></li>
-              <li><Link to="/shop">Shop</Link></li>
-              <li><Link to="/about">About Us</Link></li>
-              <li><Link to="/contact">Contact</Link></li>
+              <li><Link to="/">Shop</Link></li>
+              <li><Link to="/aboutus">About Us</Link></li>
+              <li><Link to="/">Contact</Link></li>
               <li><Link to="/faq">FAQs</Link></li>
             </ul>
           </div>
@@ -55,7 +55,7 @@ export default function Footer() {
               <li><Link to="/terms">Terms & Conditions</Link></li>
               <li><Link to="/privacy">Privacy Policy</Link></li>
               <li><Link to="/refund">Refund & Return Policy</Link></li>
-              <li><Link to="/contact">Help Center</Link></li>
+              <li><Link to="/">Help Center</Link></li>
             </ul>
           </div>
 
