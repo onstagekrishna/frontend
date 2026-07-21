@@ -9,7 +9,7 @@ export default function WhatsappChat() {
             className="whatsapp-chat-btn"
         >
             <IoLogoWhatsapp className="whatsapp-icon" />
-            <span style={{ fontFamily: "cursive" }}>
+            <span >
                 Chat with us
             </span>
         </a>

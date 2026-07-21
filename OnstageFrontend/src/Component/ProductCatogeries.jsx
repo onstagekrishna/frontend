@@ -8,7 +8,7 @@ const categories = [
   { name: "Ukuleles", image: "https://pub-2495b31388a64466968bc41b633cc28a.r2.dev/guitar-with-cap-sunglasses-shore-near-water.jpg" },
   { name: "Guitars", image: "https://pub-d5d786d675024a039884449faea17b9e.r2.dev/WhatsApp%20Image%202026-05-18%20at%204.59.13%20PM.jpeg" },
   { name: "Piano & Keyboards", image: "https://pub-2495b31388a64466968bc41b633cc28a.r2.dev/musical-keyboard-tablet-dark-room-music-production.jpg" },
-  { name: "Pro Audio & Studio", image: "https://pub-2495b31388a64466968bc41b633cc28a.r2.dev/digital-mixer-recording-studio-with-computer-recording-music-concept-creativity-show-business-space-text.jpg" },
+  { name: "Pro Audio & Studios", image: "https://pub-2495b31388a64466968bc41b633cc28a.r2.dev/digital-mixer-recording-studio-with-computer-recording-music-concept-creativity-show-business-space-text.jpg" },
   { name: "Amplifiers", image: "https://pub-2495b31388a64466968bc41b633cc28a.r2.dev/square-music-speaker-metallic-mesh-texture-closeup.jpg" },
 ];
 
