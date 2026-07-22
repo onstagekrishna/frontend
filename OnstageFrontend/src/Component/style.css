@@ -797,7 +797,7 @@ section {
     align-items: center;
     justify-content: space-between;
     width: 100%;
-    padding: 10px 12px;
+    padding: 0px 2px;
     box-sizing: border-box;
     overflow: hidden;
     gap: 10px;
@@ -11176,7 +11176,7 @@ select.pf-input {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-top: 0px;
+  margin-top: 5px;
 }
 
 .ecom-price {
