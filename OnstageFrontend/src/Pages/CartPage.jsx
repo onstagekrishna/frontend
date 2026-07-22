@@ -3,6 +3,8 @@ import ConfirmPopup from "../Component/ConfirmPopup";
 import { useNavigate } from "react-router-dom";
 import { FaLock } from "react-icons/fa";
 import { MdDelete } from "react-icons/md";
+import { IoIosHeart, IoIosHeartEmpty } from "react-icons/io";
+import { addToWishlist, removeFromWishlist, } from "../Redux/Slices/WishlistSlice";
 import {
   remove,
   increaseQty,
@@ -12,6 +14,10 @@ import { useState } from "react";
 
 export default function CartPage() {
   const cartItems = useSelector((state) => state.Cart?.items || []);
+  const wishlistItems = useSelector(
+    (state) => state.Wishlist?.items || []
+  );
+
   const { user } = useSelector((state) => state.auth);
 
   const dispatch = useDispatch();
@@ -23,8 +29,8 @@ export default function CartPage() {
   const [showPopup, setShowPopup] = useState(false);
   const [selectedId, setSelectedId] = useState(null);
 
- const formatPrice = (price) =>
-  Math.round(Number(price || 0)).toLocaleString("en-IN");
+  const formatPrice = (price) =>
+    Math.round(Number(price || 0)).toLocaleString("en-IN");
 
   const totalMRP = cartItems.reduce((total, item) => {
     const price = parseFloat(item.MRP || item.Product_price);
@@ -86,173 +92,248 @@ export default function CartPage() {
 
   return (
     <>
-      <div className="cart-container">
-        <div className="cart-left">
-          {cartItems.map((item) => {
-            const stock = Number(item.Product_Quantity || 0);
-            const price = parseFloat(item.Product_price);
+      <div className="site-container">
 
-            if (isNaN(price)) return null;
+        <div className="cart-container">
 
-            return (
-              <div className="cart-item" key={item.product_id}>
-                <div className="cart-img">
-                  <img src={item.image_01} alt={item.Product_Name} />
-                </div>
-
-                <div className="cart-details">
-                  <p className="model-brand-colour">
-                    Model - {item.Model_number || "N/A"}
-                  </p>
-
-                  <h3 className="cart-brand">
-                    {item.Brand_Name}
-                  </h3>
-
-                  <p className="cart-category">
-                    {item.Product_Category ||
-                      item.Product_Subcategory ||
-                      "Category"}
-                  </p>
-
-                  <div className="cart-price">
-                    <span style={{ fontWeight: "700" }}>
-                      MRP ₹{formatPrice(item.MRP)}
-                    </span>
-
-                    {Number(item.Product_price) > 0 && (
-                      <del style={{ marginLeft: "10px", color: "#f58220" }}>
-                        ₹{formatPrice(item.Product_price)}
-                      </del>
-                    )}
-                  </div>
-                  {stock === 0 && (
-                    <p className="out-stock">Out of Stock</p>
-                  )}
-                </div>
-
-                <div className="cart-actions">
-                  <div className="qty">
-                    <button
-                      onClick={() => {
-                        if (item.quantity <= 1) {
-                          setSelectedId(item.product_id);
-                          setShowPopup(true);
-                          return;
-                        }
-
-                        dispatch(decreaseQty(item.product_id));
-                      }}
-                    >
-                      -
-                    </button>
-
-                    <span>{item.quantity}</span>
-
-                    <button
-                      disabled={item.quantity >= stock}
-                      className={
-                        item.quantity >= stock ? "disabled-btn" : ""
-                      }
-                      onClick={() =>
-                        dispatch(increaseQty(item.product_id))
-                      }
-                    >
-                      +
-                    </button>
-                  </div>
-
-                  <button
-                    className="remove-btn"
-                    onClick={() => dispatch(remove(item.product_id))}
-                  >
-                    <MdDelete /> Remove
-                  </button>
-                </div>
-              </div>
-            );
-          })}
-        </div>
-
-        <div className="cart-right">
-          <div className="secure-box">
-            <FaLock /> 100% Secure Checkout
-          </div>
-
-          <div className="product-summary">
-            <h3>Order Summary</h3>
-
+          <div className="cart-left">
             {cartItems.map((item) => {
-              const price = parseFloat(item.MRP || item.Product_price);
-              const qty = Number(item.quantity) || 1;
+              const stock = Number(item.Product_Quantity || 0);
+              const price = parseFloat(item.Product_price);
 
               if (isNaN(price)) return null;
-
+              const isWishlisted = wishlistItems.some(
+                (w) =>
+                  String(w.product_id || w._id || w.id) ===
+                  String(item.product_id)
+              );
               return (
-                <div key={item.product_id} className="summary-row">
-                  <span>
-                    {item.Product_Name} × {qty}
-                  </span>
+                <div className="cart-item" key={item.product_id}>
 
-                  <span>₹{formatPrice(Math.round(price * qty))}</span>
+                  <div className="cart-img">
+                    <img
+                      src={item.image_01}
+                      alt={item.Product_Name}
+                    />
+                  </div>
+
+                  <div className="cart-details">
+
+                    <h3 className="cart-brand">
+                      {item.Brand_Name}
+                    </h3>
+
+                    <p className="model-brand-colour">
+                      Model - {item.Model_number || "N/A"}
+                    </p>
+
+                    <p className="cart-category">
+                      {item.Product_Category ||
+                        item.Product_Subcategory ||
+                        "Category"}
+                    </p>
+
+                    <div className="cart-price">
+                      <span>MRP ₹{formatPrice(item.MRP)}</span>
+
+                      {Number(item.Product_price) > 0 && (
+                        <del>
+                          ₹{formatPrice(item.Product_price)}
+                        </del>
+                      )}
+                    </div>
+
+                    <div className="cart-footer">
+
+                      <div className="qty">
+
+                        <button
+                          onClick={() => {
+                            if (item.quantity <= 1) {
+                              setSelectedId(item.product_id);
+                              setShowPopup(true);
+                              return;
+                            }
+
+                            dispatch(decreaseQty(item.product_id));
+                          }}
+                        >
+                          -
+                        </button>
+
+                        <span>{item.quantity}</span>
+
+                        <button
+                          disabled={item.quantity >= stock}
+                          className={item.quantity >= stock ? "disabled-btn" : ""}
+                          onClick={() => dispatch(increaseQty(item.product_id))}
+                        >
+                          +
+                        </button>
+
+                      </div>
+
+                      <div className="cart-actions">
+
+                        <button
+                          className="cart-heart"
+                          title="Wishlist"
+                          onClick={(e) => {
+                            e.stopPropagation();
+
+                            if (isWishlisted) {
+                              dispatch(removeFromWishlist(item.product_id));
+                              window.showNotification?.("Removed from Wishlist", "info");
+                            } else {
+                              dispatch(
+                                addToWishlist({
+                                  ...item,
+                                  product_id: item.product_id,
+                                })
+                              );
+                              window.showNotification?.("Moved to Wishlist", "success");
+                            }
+                          }}
+                        >
+                          {isWishlisted ? (
+                            <IoIosHeart className="wishlist-icon filled" />
+                          ) : (
+                            <IoIosHeartEmpty className="wishlist-icon" />
+                          )}
+                        </button>
+
+                        <button
+                          className="cart-delete"
+                          title="Remove"
+                          onClick={() => {
+                            setSelectedId(item.product_id);
+                            setShowPopup(true);
+                          }}
+                        >
+                          <MdDelete />
+                        </button>
+
+                      </div>
+
+                    </div>
+
+                  </div>
+
                 </div>
               );
             })}
           </div>
 
-          <h3>Apply Coupon</h3>
+          <div className="cart-right">
 
-          <div className="coupon">
-            <input
-              value={coupon}
-              onChange={(e) => setCoupon(e.target.value)}
-              placeholder="Enter Coupon"
-            />
-
-            <button onClick={applyCoupon}>Apply</button>
-          </div>
-
-          <div className="billing-box">
-            <h3>BILLING DETAILS</h3>
-
-            <div className="bill-row">
-              <span>Cart Total</span>
-              <span>₹{formatPrice(totalMRP)}</span>
+            <div className="secure-box">
+              <FaLock />
+              <span>100% Secure Checkout</span>
             </div>
 
-            <div className="bill-row">
-              <span>Shipping</span>
-              <span>
-                {shipping === 0
-                  ? "Free Delivery"
-                  : `₹${formatPrice(shipping)}`}
-              </span>
+            <div className="product-summary">
+
+              <h3>Order Summary</h3>
+
+              {cartItems.map((item) => {
+                const price = parseFloat(
+                  item.MRP || item.Product_price
+                );
+
+                const qty = Number(item.quantity) || 1;
+
+                if (isNaN(price)) return null;
+
+                return (
+                  <div
+                    key={item.product_id}
+                    className="summary-row"
+                  >
+                    <span>
+                      {item.Product_Name} × {qty}
+                    </span>
+
+                    <span>
+                      ₹{formatPrice(price * qty)}
+                    </span>
+                  </div>
+                );
+              })}
+
             </div>
 
-            {discount > 0 && (
+            <h3>Apply Coupon</h3>
+
+            <div className="coupon">
+              <input
+                value={coupon}
+                onChange={(e) =>
+                  setCoupon(e.target.value)
+                }
+                placeholder="Enter Coupon"
+              />
+
+              <button onClick={applyCoupon}>
+                Apply
+              </button>
+            </div>
+
+            <div className="billing-box">
+
+              <h3>BILLING DETAILS</h3>
+
               <div className="bill-row">
-                <span>Discount</span>
-                <span>-₹{formatPrice(discount)}</span>
+                <span>Cart Total</span>
+                <span>₹{formatPrice(totalMRP)}</span>
               </div>
-            )}
 
-            <hr />
+              <div className="bill-row">
+                <span>Shipping</span>
 
-            <div className="bill-row total">
-              <span>Total Payable</span>
-              <span>₹{formatPrice(finalAmount)}</span>
+                <span>
+                  {shipping === 0
+                    ? "Free Delivery"
+                    : `₹${formatPrice(shipping)}`}
+                </span>
+              </div>
+
+              {discount > 0 && (
+                <div className="bill-row">
+                  <span>Discount</span>
+                  <span>
+                    -₹{formatPrice(discount)}
+                  </span>
+                </div>
+              )}
+
+              <hr />
+
+              <div className="bill-row total">
+                <span>Total Payable</span>
+                <span>
+                  ₹{formatPrice(finalAmount)}
+                </span>
+              </div>
+
             </div>
+
+            <button
+              className="order-btn"
+              onClick={handlePlaceOrder}
+            >
+              PLACE ORDER
+            </button>
+
           </div>
 
-          <button className="order-btn" onClick={handlePlaceOrder}>
-            PLACE ORDER
-          </button>
         </div>
+
       </div>
 
       <ConfirmPopup
         show={showPopup}
-        message="Remove this product?"
+        title="Remove from Cart"
+        message="Are you sure you want to remove this item from your cart?"
         onConfirm={() => {
           dispatch(remove(selectedId));
           setShowPopup(false);

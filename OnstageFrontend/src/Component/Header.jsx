@@ -53,6 +53,23 @@ function Header() {
   const [mobileProductOpen, setMobileProductOpen] = useState(false);
   const [current, setCurrent] = useState(0);
 
+  useEffect(() => {
+    const handleResize = () => {
+      // Desktop par aate hi mobile menu aur submenu band
+      if (window.innerWidth > 768) {
+        setMenuOpen(false);
+        setMobileProductOpen(false);
+        setSearchOpen(false);
+      }
+    };
+
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
+
   const userData = useSelector((state) => state.auth.user);
   const cartItems = useSelector((state) => state.Cart?.items || []);
   const wishlistItems = useSelector((state) => state.Wishlist?.items || []);

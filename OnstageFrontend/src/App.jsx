@@ -100,22 +100,35 @@ function AppContent() {
         const popNotify = customElements.get("pop-notify");
 
         popNotify.configure({
-          placement: "top-right",
+          placement: "top-center",
+          stacking: true,
+          maxNotifications: 3,
+          // duration: 10000,
           iconTransformer: (icon) => {
             return `<span class="material-symbols-outlined">${icon}</span>`;
           },
         });
 
         window.showNotification = (message, type = "success") => {
+
           let icon = "check_circle";
 
           if (type === "error") icon = "error";
           if (type === "warning") icon = "warning";
           if (type === "info") icon = "info";
 
+          // Existing notifications
+          const notifications = document.querySelectorAll("pn-notification");
+
+
+          if (notifications.length >= 3) {
+            notifications[0].remove();
+          }
+
           popNotify.notify(message, {
             variant: type,
             icon,
+            duration: 2000,
           });
         };
       });
@@ -254,7 +267,7 @@ function AppContent() {
           <Route path="user-queries" element={<UserQueries />} />
           <Route path="update-orders" element={<UpdateOrders />} />
           <Route path="refunded-order" element={<RefundedOrder />} />
-          
+
 
 
         </Route>
