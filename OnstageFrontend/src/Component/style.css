@@ -2374,7 +2374,6 @@ li {
     width: 100%;
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(260px, 260px));
-    justify-content: center;
     gap: 10px;
     margin-top: 28px;
 }
@@ -2641,7 +2640,7 @@ li {
   padding: 12px;
   display: flex;
   flex-direction: column;
-  height: 104px;
+  height: 110px;
 }
 
 .ecom-brand {
@@ -2681,7 +2680,7 @@ li {
 
 .ecom-price {
   color: #000000;
-  font-size: 12px;
+  font-size: 12.5px;
 }
 
 .ecom-old-price {
@@ -6977,7 +6976,7 @@ font-size:13px;
 .ecom-old-price {
   text-decoration: line-through;
   color: #999;
-  font-size: 11px;
+  font-size: 12.5px;
 }
 
 .ecom-discount {
@@ -11176,7 +11175,7 @@ select.pf-input {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-top: 5px;
+  margin-top: 0px;
 }
 
 .ecom-price {
@@ -11186,7 +11185,7 @@ select.pf-input {
 }
 
 .ecom-old-price {
-  font-size: 11px;
+  font-size: 12.5px;
   color: #f58220;
   text-decoration: line-through;
   font-weight: 500;
@@ -11226,7 +11225,7 @@ select.pf-input {
 }
 
 .ecom-old-price {
-  font-size: 10px;
+  font-size: 12.5px;
   color: #f7941d;
   text-decoration: line-through;
   font-weight: 600;
@@ -12064,7 +12063,7 @@ select.pf-input {
     }
 
     .wishlist-page .wishlist-grid{
-        grid-template-columns:repeat(2,1fr);
+        grid-template-columns:repeat(1,1fr);
         gap:16px;
         margin-bottom:40px;
     }
@@ -12110,3 +12109,18 @@ padding:10px !important;
 }
 
 }
+
+/* scroll logo css  */
+
+.scroll-logo {
+  position: fixed;
+  right: 30px;
+  bottom: 30px;
+  width: 120px;
+  height: 120px;
+  z-index: 99999;
+  pointer-events: none;
+  transition: transform 0.08s linear;
+}
+
+/* css end scroll logo  */

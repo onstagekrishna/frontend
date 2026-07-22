@@ -97,12 +97,12 @@ function Header() {
       <div className="right">
         <span>
           <IoMailOutline />
-          <a href="mailto:onstagesupport@gmail.com">onstagesupport@gmail.com</a>
+          <a href="mailto:onstagesupport@gmail.com">info.onstageindia@gmail.com</a>
         </span>
 
         <span>
           <IoCallOutline />
-          <a href="tel:+919342342334">+91 9342342334</a>
+          <a href="tel:+918447752663">+91 8447752663 </a>
         </span>
       </div>
     </div>
