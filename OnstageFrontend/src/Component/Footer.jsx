@@ -103,21 +103,11 @@ export default function Footer() {
           </li>
           <li>
             <a href="#">
-              <FaDribbble />
-            </a>
-          </li>
-          <li>
-            <a href="#">
-              <FaGithub />
-            </a>
-          </li>
-          <li>
-            <a href="#">
               <FaLinkedin />
             </a>
           </li>
           <li>
-            <a href="#">
+            <a href="https://www.instagram.com/onstageindiaofficial/">
               <FaInstagram />
             </a>
           </li>

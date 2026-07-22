@@ -8743,391 +8743,8 @@ select.pf-input {
 /* order css end  */
 
 
-/* footer */
-/* ================= FOOTER ================= */
 
-/* ================= FOOTER ================= */
 
-.footer {
-  position: relative;
-  background: url("https://pub-ea72df14e59d4f28ad52b8d1ac0153ef.r2.dev/banner2.png") center/cover no-repeat;
-  color: white;
-  padding: 45px 15px 18px;
-  font-family: "Poppins", sans-serif;
-}
-
-.footer::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.75);
-  z-index: 0;
-}
-
-/* CONTAINER */
-.footer-container {
-  position: relative;
-  z-index: 1;
-  display: grid;
-  grid-template-columns: 1.2fr 2fr;
-  gap: 30px;
-}
-
-/* LEFT */
-.footer-left {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.footer-logo {
-  width: 170px;
-}
-
-.footer-about {
-  font-size: 16px;
-  line-height: 1.6;
-  color: #ccc;
-  font-family: 'Outfit', sans-serif;
-}
-
-/* RIGHT */
-.footer-right {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 25px;
-}
-
-/* HEADINGS */
-.footer-col h3 {
-  font-size: 18px;
-  font-family: 'Outfit', sans-serif;
-  margin-bottom: 20px;
-  font-weight: 600;
-  position: relative;
-
-}
-
-.footer-col h3::after {
-  content: "";
-  width: 30px;
-  height: 2px;
-  background: #ff7a00;
-  position: absolute;
-  bottom: -4px;
-  left: 0;
-}
-
-/* LIST */
-.footer-col ul {
-  list-style: none;
-  padding: 0;
-}
-
-.footer-col ul li {
-  margin-bottom: 8px;
-  font-size: 16px;
-  /* 🔥 FIXED */
-  color: #ccc;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-family: 'Outfit', sans-serif;
-}
-
-
-.footer-col ul li a {
-  text-decoration: none;
-  color: #ccc;
-  transition: 0.3s;
-}
-
-.footer-col ul li a:hover {
-  color: #ff7a00;
-}
-
-/* ================= BOTTOM ================= */
-
-.footer-bottom {
-  position: relative;
-  z-index: 1;
-  border-top: 1px solid rgba(255, 255, 255, 0.2);
-  margin-top: 20px;
-  padding-top: 12px;
-  text-align: center;
-}
-
-/* SOCIAL */
-.social3d {
-  --size: 27px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: calc(var(--size) / 1);
-  padding: 20px;
-  flex-wrap: wrap;
-}
-
-
-/* LIST RESET */
-.social3d li {
-  list-style: none;
-}
-
-/* ICON BOX */
-.social3d li a {
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: var(--size);
-  height: var(--size);
-  background: #fff;
-  transform: perspective(100px) rotate(-30deg) skew(25deg);
-  transition: all 0.4s ease;
-  box-shadow: calc(var(--size) * -0.2) calc(var(--size) * 0.2) 10px rgba(0, 0, 0, 0.4);
-  text-decoration: none;
-}
-
-/* ICON */
-.social3d li a svg {
-  font-size: calc(var(--size) / 2.5);
-  color: #262626;
-  transition: 0.4s;
-}
-
-/* LEFT SIDE */
-.social3d li a::before {
-  content: "";
-  position: absolute;
-  top: calc(var(--size) * 0.1);
-  left: calc(var(--size) * -0.25);
-  height: 100%;
-  width: calc(var(--size) * 0.25);
-  background: #b1b1b1;
-  transform: skewY(-45deg);
-}
-
-/* BOTTOM SIDE */
-.social3d li a::after {
-  content: "";
-  position: absolute;
-  bottom: calc(var(--size) * -0.25);
-  left: calc(var(--size) * -0.12);
-  width: 100%;
-  height: calc(var(--size) * 0.25);
-  background: #b1b1b1;
-  transform: skewX(-45deg);
-}
-
-/* HOVER */
-.social3d li a:hover {
-  transform: perspective(1000px) rotate(-30deg) skew(25deg) translate(calc(var(--size) * 0.2), calc(var(--size) * -0.2));
-
-  box-shadow: calc(var(--size) * -0.4) calc(var(--size) * 0.4) 20px rgba(0, 0, 0, 0.5);
-}
-
-.social3d li:hover a svg {
-  color: #fff;
-}
-
-/* COLORS */
-.social3d li:nth-child(1):hover a {
-  background: #ff0000;
-}
-
-.social3d li:nth-child(2):hover a {
-  background: #ea4c89;
-}
-
-.social3d li:nth-child(3):hover a {
-  background: #000;
-}
-
-.social3d li:nth-child(4):hover a {
-  background: #0077b5;
-}
-
-.social3d li:nth-child(5):hover a {
-  background: linear-gradient(45deg, #833ab4, #fd1d1d, #fcb045);
-}
-
-/* RESPONSIVE */
-@media (max-width: 768px) {
-  .social3d {
-    --size: 50px;
-  }
-}
-
-@media (max-width: 480px) {
-  .social3d {
-    --size: 20px;
-    gap: 21px;
-  }
-}
-
-/* COPY */
-.copy {
-  font-size: 13px;
-  color: #bbb;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 5px;
-  font-weight: 800;
-}
-
-/* ================= RESPONSIVE ================= */
-
-/* Tablet */
-@media (max-width: 992px) {
-
-  .footer {
-    padding: 45px 20px 20px;
-  }
-
-  .footer-container {
-    grid-template-columns: 1fr;
-    gap: 35px;
-    text-align: center;
-  }
-
-  .footer-left {
-    align-items: center;
-    max-width: 650px;
-    margin: 0 auto;
-  }
-
-  .footer-logo {
-    width: 180px;
-  }
-
-  .footer-about {
-    font-size: 15px;
-    line-height: 1.8;
-  }
-
-  .footer-right {
-    grid-template-columns: repeat(3, 1fr);
-    gap: 25px;
-    text-align: left;
-  }
-
-  .footer-col h3::after {
-    left: 0;
-  }
-
-  .footer-bottom {
-    margin-top: 30px;
-  }
-}
-
-/* Mobile */
-
-@media (max-width: 767px) {
-
-  .footer {
-    padding: 40px 15px 20px;
-  }
-
-  .footer-container {
-    display: flex;
-    flex-direction: column;
-    gap: 35px;
-    text-align: center;
-  }
-
-  .footer-left {
-    align-items: center;
-  }
-
-  .footer-logo {
-    width: 150px;
-  }
-
-  .footer-about {
-    font-size: 14px;
-    line-height: 1.7;
-    max-width: 100%;
-  }
-
-  .footer-right {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 30px;
-    text-align: center;
-  }
-
-  .footer-col h3 {
-    margin-bottom: 14px;
-    font-size: 18px;
-  }
-
-  .footer-col h3::after {
-    left: 50%;
-    transform: translateX(-50%);
-  }
-
-  .footer-col ul li {
-    justify-content: center;
-    font-size: 14px;
-    margin-bottom: 10px;
-  }
-
-  .social3d {
-    --size: 42px;
-    gap: 18px;
-    padding: 15px 0;
-  }
-
-  .social3d li a svg {
-    font-size: 18px;
-  }
-
-  .copy {
-    flex-wrap: wrap;
-    text-align: center;
-    line-height: 1.6;
-    font-size: 13px;
-    padding: 0 10px;
-  }
-
-}
-
-@media (max-width:480px) {
-
-  .footer {
-    padding: 35px 12px 18px;
-  }
-
-  .footer-logo {
-    width: 130px;
-  }
-
-  .footer-about {
-    font-size: 13px;
-  }
-
-  .footer-col h3 {
-    font-size: 17px;
-  }
-
-  .footer-col ul li {
-    font-size: 13px;
-  }
-
-  .social3d {
-    --size: 20px;
-    gap: 27px;
-  }
-
-  .copy {
-    font-size: 12px;
-  }
-
-}
-
-/* footer-end */
 
 /* ADD TO CART BUTTON */
 .ecom-product-img {
@@ -12110,17 +11727,639 @@ padding:10px !important;
 
 }
 
-/* scroll logo css  */
+/* footer css  */
 
-.scroll-logo {
-  position: fixed;
-  right: 30px;
-  bottom: 30px;
-  width: 120px;
-  height: 120px;
-  z-index: 99999;
-  pointer-events: none;
-  transition: transform 0.08s linear;
+/* ===========================
+   FOOTER
+=========================== */
+
+.footer {
+  position: relative;
+  background: url("https://pub-ea72df14e59d4f28ad52b8d1ac0153ef.r2.dev/banner2.png")
+    center/cover no-repeat;
+  color: #fff;
+  padding: 55px 0 20px;
+  font-family: "Poppins", sans-serif;
 }
 
-/* css end scroll logo  */
+.footer::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.78);
+}
+
+.footer-container {
+  position: relative;
+  z-index: 2;
+
+  width: min(1280px, calc(100% - 40px));
+  margin: auto;
+
+  display: grid;
+  grid-template-columns: 1.1fr 2fr;
+  gap: 60px;
+}
+
+/* ===========================
+   LEFT
+=========================== */
+
+.footer-left {
+  display: flex;
+  flex-direction: column;
+}
+
+.footer-logo {
+  width: 190px;
+  margin-bottom: 18px;
+}
+
+.footer-about {
+  color: #cfcfcf;
+  font-size: 15px;
+  line-height: 1.9;
+  max-width: 430px;
+}
+
+/* ===========================
+   RIGHT
+=========================== */
+
+.footer-right {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 40px;
+}
+
+/* ===========================
+   HEADINGS
+=========================== */
+
+.footer-col h3 {
+  position: relative;
+  font-size: 21px;
+  margin-bottom: 22px;
+  font-weight: 700;
+}
+
+.footer-col h3::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -7px;
+  width: 42px;
+  height: 3px;
+  background: #ff8c00;
+}
+
+/* ===========================
+   LINKS
+=========================== */
+
+.footer-col ul {
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.footer-col ul li {
+  margin-bottom: 13px;
+}
+
+.footer-col ul li a {
+  color: #cfcfcf;
+  text-decoration: none;
+  transition: .3s;
+  font-size: 15px;
+}
+
+.footer-col ul li a:hover {
+  color: #ff8c00;
+  padding-left: 6px;
+}
+
+/* ===========================
+   STORES
+=========================== */
+
+.store-item {
+  margin-bottom: 24px;
+}
+
+.store-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  font-weight: 700;
+  margin-bottom: 10px;
+  color: #fff;
+}
+
+.store-icon {
+  color: #ff8c00;
+  font-size: 18px;
+}
+
+.store-address {
+  color: #cfcfcf;
+  font-size: 14px;
+  line-height: 1.8;
+  padding-left: 28px;
+}
+
+/* ===========================
+   BOTTOM
+=========================== */
+
+.footer-bottom {
+
+  position: relative;
+  z-index: 2;
+
+  width: min(1280px, calc(100% - 40px));
+  margin: 40px auto 0;
+
+  padding-top: 22px;
+
+  border-top: 1px solid rgba(255,255,255,.15);
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+}
+
+/* ===========================
+   SOCIAL
+=========================== */
+
+.social3d {
+
+  --size:20px;
+
+  display:flex;
+  align-items:center;
+  gap:22px;
+
+  padding:0;
+  margin:0;
+}
+
+.social3d li{
+  list-style:none;
+}
+
+.social3d li a{
+
+  position:relative;
+
+  width:var(--size);
+  height:var(--size);
+
+  display:flex;
+  justify-content:center;
+  align-items:center;
+
+  background:#fff;
+
+  transform:perspective(100px) rotate(-30deg) skew(25deg);
+
+  transition:.35s;
+
+  box-shadow:-10px 10px 15px rgba(0,0,0,.35);
+
+  text-decoration:none;
+}
+
+.social3d li a svg{
+
+  color:#222;
+  font-size:21px;
+  transition:.35s;
+}
+
+.social3d li a::before{
+
+  content:"";
+
+  position:absolute;
+
+  top:5px;
+  left:-13px;
+
+  width:13px;
+  height:100%;
+
+  background:#bdbdbd;
+
+  transform:skewY(-45deg);
+}
+
+.social3d li a::after{
+
+  content:"";
+
+  position:absolute;
+
+  left:-6px;
+  bottom:-13px;
+
+  width:100%;
+  height:13px;
+
+  background:#bdbdbd;
+
+  transform:skewX(-45deg);
+}
+
+.social3d li a:hover{
+
+  transform:
+  perspective(1000px)
+  rotate(-30deg)
+  skew(25deg)
+  translate(10px,-10px);
+
+  box-shadow:-20px 20px 25px rgba(0,0,0,.45);
+
+}
+
+.social3d li:hover svg{
+  color:#fff;
+}
+
+.social3d li:nth-child(1):hover a{
+  background:#ff0000;
+}
+
+.social3d li:nth-child(2):hover a{
+  background:#0A66C2;
+}
+
+.social3d li:nth-child(3):hover a{
+  background:linear-gradient(45deg,#833ab4,#fd1d1d,#fcb045);
+}
+
+/* ===========================
+   COPYRIGHT
+=========================== */
+
+.copy{
+
+  display:flex;
+  align-items:center;
+  gap:8px;
+
+  color:#cfcfcf;
+
+  font-size:15px;
+  font-weight:500;
+}
+
+/* ===================================================
+   TABLET
+=================================================== */
+
+@media (max-width: 992px) {
+
+  .footer {
+    padding: 45px 0 20px;
+  }
+
+  .footer-container {
+
+    width: calc(100% - 30px);
+
+    grid-template-columns: 1fr;
+
+    gap: 40px;
+
+    text-align: center;
+  }
+
+  .footer-left {
+    align-items: center;
+  }
+
+  .footer-about {
+    max-width: 700px;
+    margin: auto;
+  }
+
+  .footer-right {
+
+    grid-template-columns: repeat(3,1fr);
+
+    gap: 30px;
+
+    text-align: left;
+  }
+
+  .footer-bottom{
+
+    width: calc(100% - 30px);
+
+  }
+
+}
+
+
+
+/* ===================================================
+   MOBILE
+=================================================== */
+
+@media (max-width:767px){
+
+.footer{
+
+padding:40px 0 18px;
+
+}
+
+.footer-container{
+
+width:calc(100% - 24px);
+
+display:flex;
+
+flex-direction:column;
+
+gap:35px;
+
+}
+
+.footer-left{
+
+text-align:center;
+
+align-items:center;
+
+}
+
+.footer-logo{
+
+width:155px;
+
+}
+
+.footer-about{
+
+font-size:14px;
+
+line-height:1.8;
+
+max-width:100%;
+
+}
+
+
+/* ---------------------
+   IMPORTANT
+---------------------- */
+
+.footer-right{
+
+display:grid;
+
+grid-template-columns:1fr 1fr;
+
+gap:30px 20px;
+
+align-items:start;
+
+text-align:left;
+
+}
+
+/* Store niche aa jayega */
+
+.footer-col:nth-child(3){
+
+grid-column:1 / -1;
+
+}
+
+
+/* Heading */
+
+.footer-col h3{
+
+font-size:18px;
+
+margin-bottom:18px;
+
+}
+
+.footer-col h3::after{
+
+left:0;
+
+transform:none;
+
+}
+
+
+/* Links */
+
+.footer-col ul li{
+
+font-size:14px;
+
+margin-bottom:10px;
+
+display:flex;
+
+justify-content:flex-start;
+
+}
+
+
+/* Store */
+
+.store-item{
+
+margin-bottom:22px;
+
+}
+
+.store-address{
+
+padding-left:28px;
+
+font-size:14px;
+
+line-height:1.7;
+
+}
+
+
+/* Bottom */
+
+.footer-bottom{
+
+width:calc(100% - 24px);
+
+display:flex;
+
+justify-content:space-between;
+
+align-items:center;
+
+gap:15px;
+
+flex-wrap:wrap;
+
+}
+
+/* Social Left */
+
+.social3d{
+
+ --size: 28px;
+gap: 18px;
+padding: 0px 0px 7px 28px;
+justify-content: flex-start;
+    
+
+}
+
+/* Copyright Right */
+
+.copy{
+
+font-size:12px;
+
+text-align:right;
+
+justify-content:flex-end;
+
+}
+
+}
+
+
+
+/* ===================================================
+   SMALL MOBILE
+=================================================== */
+
+@media (max-width:480px){
+
+.footer{
+
+padding:35px 0 18px;
+
+}
+
+.footer-container{
+
+width:calc(100% - 20px);
+
+}
+
+.footer-logo{
+
+width:135px;
+
+}
+
+.footer-about{
+
+font-size:13px;
+
+}
+
+.footer-right{
+
+grid-template-columns:1fr 1fr;
+
+gap:25px 12px;
+
+}
+
+.footer-col h3{
+
+font-size:17px;
+
+}
+
+.footer-col ul li{
+
+font-size:13px;
+
+}
+
+.store-address{
+
+font-size:13px;
+
+}
+
+.social3d{
+
+--size:16px;
+
+gap:14px;
+
+}
+
+.copy{
+
+font-size:11px;
+
+}
+
+}
+
+
+
+/* ===================================================
+   EXTRA SMALL
+=================================================== */
+
+@media (max-width:360px){
+
+.footer-right{
+
+gap:20px 8px;
+
+}
+
+.footer-col h3{
+
+font-size:16px;
+
+}
+
+.footer-col ul li{
+
+font-size:12px;
+
+}
+
+.footer-about{
+
+font-size:12px;
+
+}
+
+.social3d{
+
+--size:16px;
+
+}
+
+.copy{
+
+font-size:10px;
+
+}
+
+}
+
+/* footer end css  */
+
+
