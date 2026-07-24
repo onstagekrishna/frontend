@@ -16,7 +16,6 @@ import OurProductCat from "./Pages/OurProductCat";
 import Signup from "./Component/Signup";
 import Login from "./Component/Login";
 import AboutUs from "./Pages/AboutUs";
-import ContactUs from "./Pages/ContactUs";
 import CartPage from "./Pages/CartPage";
 import WishlistPage from "./Pages/WishListPage";
 import Home from "./Component/Home";
@@ -57,7 +56,9 @@ import VerifyOTP from "./Pages/VerifyOTP";
 
 import ChangePasswordFromEmail from "./Pages/ChangePasswordFromEmail";
 import LoadingIcon from "./Component/LoadingIcon";
+import Contact from "./Pages/Contact";
 import Faq from "./Pages/Faq";
+
 
 function AppContent() {
   const productsRef = useRef(null);
@@ -232,7 +233,6 @@ function AppContent() {
         <Route path="/verify-otp" element={<VerifyOTP />} />
 
         <Route path="/aboutus" element={<AboutUs />} />
-        <Route path="/contactus" element={<ContactUs />} />
         <Route path="/cart" element={<CartPage />} />
         <Route path="/wishlist" element={<WishlistPage />} />
         <Route path="/category" element={<FilterProductByCategoryes />} />
@@ -254,6 +254,7 @@ function AppContent() {
         <Route path="/terms" element={<TermsConditions />} />
         <Route path="/privacy" element={<PrivacyPolicy />} />
         <Route path="/refund" element={<RefundPolicy />} />
+        <Route path="/contactus" element={<Contact />} />
         <Route path="/faq" element={<Faq />} />
         <Route path="/blog-details" element={<BlogDetails />} />
 

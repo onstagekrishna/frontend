@@ -8,6 +8,7 @@ import {
   FaPhoneAlt,
   FaEnvelope,
   FaStore,
+  FaFacebook,
 } from "react-icons/fa";
 import { MdCopyright } from "react-icons/md";
 import { Link } from "react-router-dom";
@@ -44,7 +45,7 @@ export default function Footer() {
               <li><Link to="/">Home</Link></li>
               <li><Link to="/">Shop</Link></li>
               <li><Link to="/aboutus">About Us</Link></li>
-              <li><Link to="/">Contact</Link></li>
+              <li><Link to="/Contactus">Contact</Link></li>
               <li><Link to="/faq">FAQs</Link></li>
             </ul>
           </div>
@@ -95,23 +96,46 @@ export default function Footer() {
       <div className="footer-bottom">
 
         {/* ✅ NEW 3D SOCIAL ICONS */}
-        <ul className="social3d">
-          <li>
-            <a href="#">
-              <FaYoutube />
-            </a>
-          </li>
-          <li>
-            <a href="#">
-              <FaLinkedin />
-            </a>
-          </li>
-          <li>
-            <a href="https://www.instagram.com/onstageindiaofficial/">
-              <FaInstagram />
-            </a>
-          </li>
-        </ul>
+
+        <div className="footer-social">
+
+          <a
+            href="https://www.youtube.com/"
+            target="_blank"
+            rel="noreferrer"
+            className="footer-social-icon"
+          >
+            <FaYoutube />
+          </a>
+
+          <a
+            href="https://www.linkedin.com/"
+            target="_blank"
+            rel="noreferrer"
+            className="footer-social-icon"
+          >
+            <FaLinkedin />
+          </a>
+
+          <a
+            href="https://www.instagram.com/onstageindiaofficial/"
+            target="_blank"
+            rel="noreferrer"
+            className="footer-social-icon"
+          >
+            <FaInstagram />
+          </a>
+
+          <a
+            href="https://www.facebook.com/"
+            target="_blank"
+            rel="noreferrer"
+            className="footer-social-icon"
+          >
+            <FaFacebook />
+          </a>
+
+        </div>
 
         <p className="copy">
           <MdCopyright /> {new Date().getFullYear()} OnStage - All Rights Reserved

@@ -43,14 +43,16 @@ export default function AboutUs() {
 
       {/* Counter Section */}
 
-
-      {/* Top Section */}
       <div className="about-top">
+
+        {/* Left */}
         <div className="about-content">
-          <h2>About Us</h2>
+
+          <h2>About OnStage Music Factory</h2>
+
           <p>
-            At OnStage Music Factory, music is more than just sound — it
-            is passion, creativity, and expression. Since our inception, we have
+            At OnStage Music Factory, music is more than just sound — it is
+            passion, creativity, and expression. Since our inception, we have
             been committed to delivering world-class musical instruments and
             professional audio equipment to artists, studios, and music
             enthusiasts across the region. Our mission is simple: to make
@@ -62,58 +64,109 @@ export default function AboutUs() {
             offering a wide range of instruments and equipment designed to meet
             the needs of every musician. Whether you are setting up your first
             home studio, performing live on stage, or producing music
-            professionally, Onstage ensures that you have the right tools to
+            professionally, OnStage ensures that you have the right tools to
             bring your sound to life.
           </p>
-          <p>
-            At Onstage Distributor Company, we take pride in offering a complete
-            selection of instruments and equipment that meet the needs of every
-            musician. Our acoustic drums and electronic drum kits deliver
-            everything from traditional rhythms to modern digital precision,
-            giving drummers flexibility on stage and in the studio. To ensure
-            every note is heard with clarity, our studio monitors and mixers
-            provide professional-grade sound for producers, engineers, and
-            performers alike.
-          </p>
+
+                  <p>
+          At OnStage Distributor Company, we take pride in offering a complete
+          selection of instruments and equipment that meet the needs of every
+          musician. Our acoustic drums and electronic drum kits deliver
+          everything from traditional rhythms to modern digital precision,
+          giving drummers flexibility on stage and in the studio. To ensure
+          every note is heard with clarity, our studio monitors, mixers,
+          microphones and professional audio systems help creators produce
+          exceptional sound with confidence.
+        </p>
+
         </div>
+
+        {/* Right */}
         <div className="about-image">
+
           <img
-            src="https://res.cloudinary.com/dfilhi9ku/image/upload/v1758528307/Gemini_Generated_Image_1zdpvs1zdpvs1zdp_t8dt0s.png"
-            alt="About Us"
+            src="https://pub-545cabf104d34f849ccb8626338c8a89.r2.dev/ChatGPT%20Image%20Jul%2024%2C%202026%2C%2001_50_05%20PM.png"
+            alt="OnStage Music Factory"
           />
+
         </div>
+
       </div>
 
-      {/* Mission & Vision */}
+
+      {/* Mission Vision */}
+
       <div className="about-boxes">
+
         <div className="about-box mission">
+
           <h3>Our Mission</h3>
+
           <p>
-            To deliver top-quality services with integrity, innovation, and a
-            customer-first approach.
+            To empower every musician with world-class musical instruments,
+            innovative audio solutions and exceptional customer service while
+            making premium music equipment accessible across India.
           </p>
+
         </div>
+
         <div className="about-box vision">
+
           <h3>Our Vision</h3>
+
           <p>
-            To be recognized as a leader in our industry by creating value and
-            making a positive impact.
+            To become India's most trusted destination for musical
+            instruments, professional audio equipment and creative innovation,
+            inspiring every artist to perform with confidence.
           </p>
+
         </div>
+
       </div>
 
-      {/* Why Choose Us */}
+      {/* Why Choose */}
+
       <div className="about-why">
-        <h2>Why Choose Us</h2>
-        <div className="why-box">
-          <ul>
-            <li>✔ Experienced Team</li>
-            <li>✔ Customer-Centric Approach</li>
-            <li>✔ Innovative Solutions</li>
-            <li>✔ Reliable & Trusted Services</li>
-          </ul>
+
+        <h2>Why Choose OnStage Music Factory</h2>
+
+        <div className="why-grid">
+
+          <div className="why-card">
+            <h3>Premium Global Brands</h3>
+            <p>Discover internationally trusted musical instrument brands.</p>
+          </div>
+
+          <div className="why-card">
+            <h3>100% Genuine Products</h3>
+            <p>Every product is sourced directly from authorized distributors.</p>
+          </div>
+
+          <div className="why-card">
+            <h3>Fast Delivery</h3>
+            <p>Safe and quick shipping across India.</p>
+          </div>
+
+          <div className="why-card">
+            <h3>Expert Support</h3>
+            <p>Our team helps you choose the perfect instrument.</p>
+          </div>
+
+          <div className="why-card">
+            <h3>Studio & Live Solutions</h3>
+            <p>Everything from home studios to live performance setups.</p>
+          </div>
+
+          <div className="why-card">
+            <h3>After Sales Service</h3>
+            <p>Reliable assistance even after your purchase.</p>
+          </div>
+
         </div>
+
       </div>
+      {/* Top Section */}
+
 
     </div>
   );
