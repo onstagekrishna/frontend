@@ -269,7 +269,7 @@ export default function AddressPage() {
       const razorpayOrder = orderData.order || orderData.data || {};
 
       const options = {
-        key: "rzp_test_SbiVD7Q7wXtWMV",
+        key: import.meta.env.VITE_RAZORPAY_KEY_ID,
         amount: razorpayOrder.amount || payableAmount * 100,
         currency: razorpayOrder.currency || "INR",
         name: "OnStage",
