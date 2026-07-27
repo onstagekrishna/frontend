@@ -63,7 +63,7 @@ export default function WishlistPage() {
             </div>
           </div>
         ) : (
-          <div className="ecom-products-grid wishlist-grid">
+          <div className="ecom-products-grid ">
             {wishlistItems.map((item) => {
               const brand = item?.Brand_Name || item?.brand || "Brand";
 
