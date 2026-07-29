@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 
 
-const PRODUCT_API = "https://api.musicandmore.co.in/api/v1/categoryProduct";
+const PRODUCT_API = "https://api.onstage.co.in/api/v1/categoryProduct";
 
 export default function Dashboard() {
   const graphRef = useRef(null);
