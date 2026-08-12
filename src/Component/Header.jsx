@@ -16,24 +16,192 @@ import SearchBar from "./SearchBar";
 import { logoutUser } from "../Redux/Slices/AuthSlice";
 
 const productBrands = [
-  "Cordoba", "Fender", "Jackson", "Shure",
-  "Alesis", "Schecter", "MUSEDO", "Martin",
-  "Aria", "Charvel", "Ernie Ball", "Nux",
-  "Line 6", "Ludwig", "Music Man", "Orangewood",
-  "Remo", "Rotosound", "Sabian", "Santana",
-  "Slash", "Sonor", "Seymour Duncan", "Akai",
+  {
+    name: "Cordoba",
+    logo: "https://pub-545cabf104d34f849ccb8626338c8a89.r2.dev/0_Logo_Cordoba_Blue%2BCordoba%2Bwith%2BArches-large.png",
+  },
+  {
+    name: "Fender",
+    logo: "https://pub-d5d786d675024a039884449faea17b9e.r2.dev/fender_logo.svg",
+  },
+  {
+    name: "Jackson",
+    logo: "https://pub-545cabf104d34f849ccb8626338c8a89.r2.dev/1280px-Jackson_guitars_logo.svg.png",
+  },
+  {
+    name: "Shure",
+    logo: "https://pub-545cabf104d34f849ccb8626338c8a89.r2.dev/1280px-Shure_Logo.svg.png",
+  },
+  {
+    name: "Alesis",
+    logo: "https://pub-d5d786d675024a039884449faea17b9e.r2.dev/images.png",
+  },
+  {
+    name: "Schecter",
+    logo: "https://pub-545cabf104d34f849ccb8626338c8a89.r2.dev/296-2962465_schecter-guitar-reasearch-schecter-guitar-research-logo.png",
+  },
+  {
+    name: "MUSEDO",
+    logo: "https://pub-d5d786d675024a039884449faea17b9e.r2.dev/Logo-brand-Musedo.jpg",
+  },
+  {
+    name: "Martin",
+    logo: "https://pub-545cabf104d34f849ccb8626338c8a89.r2.dev/800px-Martin_guitar_logo.png",
+  },
+  {
+    name: "Aria",
+    logo: "https://pub-545cabf104d34f849ccb8626338c8a89.r2.dev/Aria_guitars_logo.png",
+  },
+  {
+    name: "Charvel",
+    logo: "https://pub-545cabf104d34f849ccb8626338c8a89.r2.dev/Charvel_Guitars_Logo.png",
+  },
+  {
+    name: "Ernie Ball",
+    logo: "https://pub-545cabf104d34f849ccb8626338c8a89.r2.dev/Ernie-Ball-Logo.png",
+  },
+  {
+    name: "Nux",
+    logo: "https://pub-d5d786d675024a039884449faea17b9e.r2.dev/nux-logo-01.png",
+  },
+  {
+    name: "Line 6",
+    logo: "https://pub-545cabf104d34f849ccb8626338c8a89.r2.dev/Line_6_logo.png",
+  },
+  {
+    name: "Ludwig",
+    logo: "https://pub-545cabf104d34f849ccb8626338c8a89.r2.dev/Ludwig_logo.png",
+  },
+  {
+    name: "Music Man",
+    logo: "https://pub-545cabf104d34f849ccb8626338c8a89.r2.dev/Music-Man-logo.png",
+  },
+  {
+    name: "Orangewood",
+    logo: "https://pub-545cabf104d34f849ccb8626338c8a89.r2.dev/Orangewood_Logo_Primary_BK_1200x.png",
+  },
+  {
+    name: "Remo",
+    logo: "https://pub-545cabf104d34f849ccb8626338c8a89.r2.dev/Remo.png",
+  },
+  {
+    name: "Rotosound",
+    logo: "https://pub-8fb728ccc32b4c72a6f05fff3cf3d811.r2.dev/3rd%20brand/rotosound.png",
+  },
+  {
+    name: "Sabian",
+    logo: "https://pub-545cabf104d34f849ccb8626338c8a89.r2.dev/Sabian_cymbals_logo.svg.png",
+  },
+  {
+    name: "Santana",
+    logo: "https://pub-545cabf104d34f849ccb8626338c8a89.r2.dev/Santana.png",
+  },
+  {
+    name: "Slash",
+    logo: "https://pub-8fb728ccc32b4c72a6f05fff3cf3d811.r2.dev/3rd%20brand/slash.jpg.jpeg",
+  },
+  {
+    name: "Sonor",
+    logo: "https://pub-545cabf104d34f849ccb8626338c8a89.r2.dev/Sonor_logo.png",
+  },
+  {
+    name: "Seymour Duncan",
+    logo: "https://pub-545cabf104d34f849ccb8626338c8a89.r2.dev/a86b256ceab02397aa5640056a2823eb.jpeg",
+  },
+  {
+    name: "Akai",
+    logo: "https://pub-545cabf104d34f849ccb8626338c8a89.r2.dev/akai-professional-vector-logo.png",
+  },
+  {
+    name: "Dean Markley",
+    logo: "https://pub-8fb728ccc32b4c72a6f05fff3cf3d811.r2.dev/3rd%20brand/356-3566818_dean-markley-logo-png-transparent-dean-markley-logo.png",
+  },
+  {
+    name: "Gator",
+    logo: "https://pub-8fb728ccc32b4c72a6f05fff3cf3d811.r2.dev/3rd%20brand/7b56f5-Gator_Logo.png",
+  },
+  {
+    name: "EMG",
+    logo: "https://pub-8fb728ccc32b4c72a6f05fff3cf3d811.r2.dev/3rd%20brand/EMG%2C_Inc._Logo.svg.png",
+  },
+  {
+    name: "Cort",
+    logo: "https://pub-8fb728ccc32b4c72a6f05fff3cf3d811.r2.dev/3rd%20brand/New_Cort_Logo_Black.png",
+  },
+  {
+    name: "Hohner",
+    logo: "https://pub-8fb728ccc32b4c72a6f05fff3cf3d811.r2.dev/3rd%20brand/hohner-logo-png_seeklogo-353343.png",
+  },
+  {
+    name: "Pearl",
+    logo: "https://pub-8fb728ccc32b4c72a6f05fff3cf3d811.r2.dev/3rd%20brand/pearl-logo-png-transparent.png",
+  },
+  {
+    name: "Pluto",
+    logo: "https://pub-8fb728ccc32b4c72a6f05fff3cf3d811.r2.dev/3rd%20brand/pluto_logo.png",
+  },
+  {
+    name: "Yamaha",
+    logo: "https://pub-8fb728ccc32b4c72a6f05fff3cf3d811.r2.dev/3rd%20brand/png-clipart-yamaha-logo-yamaha-corporation-yamaha-pro-audio-logo-sound-yamaha-television-text.png",
+  },
+  {
+    name: "Tama",
+    logo: "https://pub-8fb728ccc32b4c72a6f05fff3cf3d811.r2.dev/3rd%20brand/tama-logo.png",
+  },
+  {
+    name: "DAddario",
+    logo: "https://pub-8fb728ccc32b4c72a6f05fff3cf3d811.r2.dev/3rd%20brand/2b5af7_a431353b93b34fd2b2357ca832aaa19c~mv2.jpg.jpeg",
+  },
+  {
+    name: "Brand Extra",
+    logo: "https://pub-8fb728ccc32b4c72a6f05fff3cf3d811.r2.dev/3rd%20brand/images%20(1).png",
+  },
 ];
 
-const productCategories = [
-  "Drums & Drums Accessories",
-  "Effects & Pedals",
-  "Accessories",
-  "Ukuleles",
-  "Guitars",
-  "Piano & Keyboards",
-  "Pro Audio & Studio",
-  "Amplifiers",
+const categories = [
+  {
+    name: "Drums & Drums Accessories",
+    image:
+      "https://pub-2495b31388a64466968bc41b633cc28a.r2.dev/drum-set-dark-room-with-beautiful-lighting-snare-drum-cymbals-bass-drum%20(1).jpg",
+  },
+  {
+    name: "Effects & Pedals",
+    image:
+      "https://pub-2495b31388a64466968bc41b633cc28a.r2.dev/audio_interfaces_and_mixers.jpg",
+  },
+  {
+    name: "Accessories",
+    image:
+      "https://pub-d5d786d675024a039884449faea17b9e.r2.dev/accessories.jpg.jpeg",
+  },
+  {
+    name: "Ukuleles",
+    image:
+      "https://pub-2495b31388a64466968bc41b633cc28a.r2.dev/guitar-with-cap-sunglasses-shore-near-water.jpg",
+  },
+  {
+    name: "Guitars",
+    image:
+      "https://pub-d5d786d675024a039884449faea17b9e.r2.dev/WhatsApp%20Image%202026-05-18%20at%204.59.13%20PM.jpeg",
+  },
+  {
+    name: "Piano & Keyboards",
+    image:
+      "https://pub-2495b31388a64466968bc41b633cc28a.r2.dev/musical-keyboard-tablet-dark-room-music-production.jpg",
+  },
+  {
+    name: "Pro Audio & Studios",
+    image:
+      "https://pub-2495b31388a64466968bc41b633cc28a.r2.dev/digital-mixer-recording-studio-with-computer-recording-music-concept-creativity-show-business-space-text.jpg",
+  },
+  {
+    name: "Amplifiers",
+    image:
+      "https://pub-2495b31388a64466968bc41b633cc28a.r2.dev/square-music-speaker-metallic-mesh-texture-closeup.jpg",
+  },
 ];
+
+
 
 function Header() {
   const navigate = useNavigate();
@@ -210,10 +378,16 @@ function Header() {
                 {productBrands.map((brand) => (
                   <button
                     type="button"
-                    key={brand}
-                    onClick={() => handleBrandClick(brand)}
+                    className="navbar-brand-logo-btn"
+                    key={brand.name}
+                    onClick={() => handleBrandClick(brand.name)}
+                    title={brand.name}
                   >
-                    {brand}
+                    <img
+                      src={brand.logo}
+                      alt={brand.name}
+                      className="navbar-brand-logo"
+                    />
                   </button>
                 ))}
               </div>
@@ -390,18 +564,34 @@ function Header() {
             Our Products <IoMdArrowDropdown />
           </li>
 
-          {mobileProductOpen && (
-            <div className="mobile-brand-list">
-              {productCategories.map((category) => (
-                <button
-                  key={category}
-                  onClick={() => handleCategoryClick(category)}
-                >
-                  {category}
-                </button>
-              ))}
-            </div>
-          )}
+         {mobileProductOpen && (
+  <div className="mobile-category-grid">
+
+    {categories.map((category, index) => (
+      <button
+        type="button"
+        className="mobile-category-card"
+        key={index}
+        onClick={() => handleCategoryClick(category.name)}
+      >
+
+        <img
+          src={category.image}
+          alt={category.name}
+          className="mobile-category-image"
+        />
+
+        <span className="mobile-category-overlay"></span>
+
+        <span className="mobile-category-name">
+          {category.name}
+        </span>
+
+      </button>
+    ))}
+
+  </div>
+)}
 
           {/* {!isAdmin && (
             <>

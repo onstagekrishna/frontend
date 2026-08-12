@@ -1,29 +1,108 @@
-import { useEffect, useRef, useState } from "react";
+import React, {
+  useEffect,
+  useState,
+  useRef,
+  useCallback,
+} from "react";
+
+import {
+  FaChevronLeft,
+  FaChevronRight,
+  FaStar,
+} from "react-icons/fa";
+
+import {
+  IoIosHeart,
+  IoIosHeartEmpty,
+} from "react-icons/io";
+
 import { useNavigate } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
-import { IoIosHeart, IoIosHeartEmpty } from "react-icons/io";
-import { MdKeyboardArrowLeft, MdKeyboardArrowRight } from "react-icons/md";
-import { FaStar } from "react-icons/fa";
-import { addToWishlist, removeFromWishlist } from "../Redux/Slices/WishlistSlice";
+
+import {
+  useDispatch,
+  useSelector,
+} from "react-redux";
+
+import useEmblaCarousel from "embla-carousel-react";
+import Autoplay from "embla-carousel-autoplay";
+
+import {
+  addToWishlist,
+  removeFromWishlist,
+} from "../Redux/Slices/WishlistSlice";
+
 
 const accessoryWords = [
-  "hanger", "holder", "stand", "capo", "mute", "mutes",
-  "damper", "dampener", "strap", "string", "strings",
-  "pick", "picks", "cable", "case", "bag", "cover",
-  "pedal", "tuner", "accessory", "accessories",
+  "hanger",
+  "holder",
+  "stand",
+  "capo",
+  "mute",
+  "mutes",
+  "damper",
+  "dampener",
+  "strap",
+  "string",
+  "strings",
+  "pick",
+  "picks",
+  "cable",
+  "case",
+  "bag",
+  "cover",
+  "pedal",
+  "tuner",
+  "accessory",
+  "accessories",
 ];
 
-export default function AccessoriesSlider() {
+
+function AccessoriesSlider() {
+
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const sliderRef = useRef(null);
-
-  const wishlistItems = useSelector((state) => state.Wishlist?.items || []);
 
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [pauseSlider, setPauseSlider] = useState(false);
+  const [cardsToShow, setCardsToShow] = useState(4);
 
+  const wishlistItems = useSelector(
+    (state) => state.Wishlist?.items || []
+  );
+
+
+  /*
+   * AUTOPLAY
+   */
+  const autoplay = useRef(
+    Autoplay({
+      delay: 3000,
+      stopOnInteraction: false,
+      stopOnMouseEnter: true,
+    })
+  );
+
+
+  /*
+   * EMBLA
+   */
+  const [emblaRef, emblaApi] = useEmblaCarousel(
+    {
+      loop: true,
+      align: "start",
+      slidesToScroll: 1,
+      dragFree: false,
+      skipSnaps: false,
+      duration: 25,
+      containScroll: "trimSnaps",
+    },
+    [autoplay.current]
+  );
+
+
+  /*
+   * CLEAN TEXT
+   */
   const clean = (value) =>
     String(value || "")
       .toLowerCase()
@@ -33,31 +112,49 @@ export default function AccessoriesSlider() {
       .replace(/_/g, " ")
       .replace(/\s+/g, " ");
 
-  const getProductId = (item) => item?._id || item?.product_id || item?.id;
 
-  const getPrice = (item) => Number(item?.price || item?.Product_price || 0);
+  /*
+   * PRODUCT ID
+   */
+  const getProductId = (item) =>
+    item?._id ||
+    item?.product_id ||
+    item?.id;
 
-  const getStock = (item) => {
-    const stock = item?.Product_Quantity ?? item?.stock ?? item?.quantity;
-    if (stock === undefined || stock === null || stock === "") return 1;
-    return Number(stock);
-  };
 
+  /*
+   * SEARCH TEXT
+   */
   const getSearchText = (item) =>
-    clean(
-      `${item?.Product_Name || item?.name || ""} 
-       ${item?.Product_Subcategory || item?.category || ""} 
-       ${item?.Product_Category || ""}`
-    );
+    clean(`
+      ${item?.Product_Name || item?.name || ""}
+      ${item?.Product_Subcategory || item?.category || ""}
+      ${item?.Product_Category || ""}
+    `);
 
+
+  /*
+   * ACCESSORY CHECK
+   */
   const isAccessory = (item) => {
+
     const text = getSearchText(item);
-    return accessoryWords.some((word) => text.includes(word));
+
+    return accessoryWords.some((word) =>
+      text.includes(word)
+    );
   };
 
+
+  /*
+   * FETCH ACCESSORIES
+   */
   useEffect(() => {
-    async function fetchAccessories() {
+
+    const fetchAccessories = async () => {
+
       try {
+
         setLoading(true);
 
         const res = await fetch(
@@ -68,231 +165,559 @@ export default function AccessoriesSlider() {
 
         const data = await res.json();
 
-        const arr = data?.products || [];
+        const arr =
+          data?.products ||
+          data?.data ||
+          data ||
+          [];
 
-        console.log("API Products:", arr.length);
+        /*
+         * Agar API already Accessories return karti hai
+         * to direct use hoga.
+         *
+         * Otherwise keyword filter bhi available hai.
+         */
+        const accessoryProducts = Array.isArray(arr)
+          ? arr.filter(isAccessory)
+          : [];
 
-        setProducts(arr);
+        /*
+         * Agar keyword filtering ke baad kuch nahi mila,
+         * API ke products hi use karenge.
+         */
+        setProducts(
+          accessoryProducts.length
+            ? accessoryProducts
+            : Array.isArray(arr)
+              ? arr
+              : []
+        );
 
-      } catch (err) {
-        console.log("Accessories Slider Error:", err);
+      } catch (error) {
+
+        console.error(
+          "Accessories Slider Error:",
+          error
+        );
+
         setProducts([]);
+
       } finally {
+
         setLoading(false);
+
       }
-    }
+
+    };
 
     fetchAccessories();
+
   }, []);
 
 
+  /*
+   * RESPONSIVE CARDS
+   */
   useEffect(() => {
-    if (!products.length || pauseSlider) return;
 
-    const slider = sliderRef.current;
+    const resize = () => {
 
-    const autoSlide = setInterval(() => {
-      if (!slider) return;
+      if (window.innerWidth < 576) {
 
-      const card = slider.querySelector(".acc-home-card");
+        setCardsToShow(1);
 
-      if (!card) return;
+      } else if (window.innerWidth < 768) {
 
-      const gap = 14;
-      const moveAmount = card.offsetWidth + gap;
+        setCardsToShow(2);
 
-      const maxScroll = slider.scrollWidth - slider.clientWidth;
+      } else if (window.innerWidth < 992) {
 
-      if (slider.scrollLeft >= maxScroll - 5) {
-        slider.scrollTo({
-          left: 0,
-          behavior: "smooth",
-        });
+        setCardsToShow(3);
+
+      } else if (window.innerWidth < 1400) {
+
+        setCardsToShow(5);
+
       } else {
-        slider.scrollBy({
-          left: moveAmount,
-          behavior: "smooth",
-        });
+
+        setCardsToShow(6);
+
       }
-    }, 3000);
 
-    return () => clearInterval(autoSlide);
-  }, [products, pauseSlider]);
+    };
 
-  const scrollSlider = (direction) => {
-    const card = sliderRef.current?.querySelector(".acc-home-card");
+    resize();
 
-    if (!card) return;
+    window.addEventListener(
+      "resize",
+      resize
+    );
 
-    const gap = 20;
-    const cardWidth = card.offsetWidth + gap;
+    return () => {
 
-    sliderRef.current.scrollBy({
-      left: direction === "left" ? -cardWidth : cardWidth,
-      behavior: "smooth",
-    });
-  };
+      window.removeEventListener(
+        "resize",
+        resize
+      );
 
+    };
+
+  }, []);
+
+
+  /*
+   * REINITIALIZE EMBLA
+   */
+  useEffect(() => {
+
+    if (!emblaApi) return;
+
+    emblaApi.reInit();
+
+    autoplay.current.reset();
+
+  }, [
+    cardsToShow,
+    emblaApi,
+    products,
+  ]);
+
+
+  /*
+   * PREVIOUS
+   */
+  const prev = useCallback(() => {
+
+    emblaApi?.scrollPrev();
+
+  }, [emblaApi]);
+
+
+  /*
+   * NEXT
+   */
+  const next = useCallback(() => {
+
+    emblaApi?.scrollNext();
+
+  }, [emblaApi]);
+
+
+  /*
+   * PRODUCT CLICK
+   */
   const handleProductClick = (item) => {
-    const productId = getProductId(item);
-    if (!productId) return;
 
-    navigate(`/productDetails/${productId}`, { state: item });
+    const id = getProductId(item);
+
+    if (!id) return;
+
+    navigate(
+      `/productDetails/${id}`,
+      {
+        state: {
+          ...item,
+          product_id: id,
+        },
+      }
+    );
+
   };
 
+
+  /*
+   * PRICE FORMAT
+   */
+  const formatPrice = (price) =>
+    Number(price || 0).toLocaleString(
+      "en-IN"
+    );
+
+
+  /*
+   * LOADING
+   */
   if (loading) {
+
     return (
       <section className="acc-home-section">
-        <h2 className="acc-home-title">Accessories Collection</h2>
-        <p className="acc-loading">Loading...</p>
+
+        <div className="site-container">
+
+          <div className="acc-section-header">
+
+            <h2 className="acc-section-heading">
+              ACCESSORIES
+            </h2>
+
+            <p className="acc-section-tagline">
+              Discover essential music gear and
+              accessories for every musician.
+            </p>
+
+          </div>
+
+          <p className="acc-loading">
+            Loading...
+          </p>
+
+        </div>
+
       </section>
     );
+
   }
 
-  if (!products.length) return null;
+
+  /*
+   * NO PRODUCTS
+   */
+  if (!products.length) {
+    return null;
+  }
+
 
   return (
+
     <section className="acc-home-section">
 
       <div className="site-container">
 
         <div className="acc-home-container">
 
-          {/* Heading */}
+
+          {/* HEADER */}
+
           <div className="acc-section-header">
+
             <h2 className="acc-section-heading">
               ACCESSORIES
             </h2>
 
             <p className="acc-section-tagline">
-              Discover essential music gear and accessories for every musician.
+              Discover essential music gear and
+              accessories for every musician.
             </p>
+
           </div>
 
-          <div
-            className="acc-home-slider-wrap"
-            onMouseEnter={() => setPauseSlider(true)}
-            onMouseLeave={() => setPauseSlider(false)}
-          >
+
+          {/* SLIDER */}
+
+          <div className="acc-home-slider-wrap">
+
+
+            {/* LEFT ARROW */}
+
             <button
+              type="button"
               className="acc-slide-btn acc-left"
-              onClick={() => scrollSlider("left")}
+              onClick={prev}
+              aria-label="Previous products"
             >
-              <MdKeyboardArrowLeft />
+
+              <FaChevronLeft />
+
             </button>
 
-            <div className="acc-home-slider" ref={sliderRef}>
-              {products.map((item, index) => {
 
-                const productId = getProductId(item);
+            {/* EMBLA */}
 
-                const isWishlisted =
-                  Array.isArray(wishlistItems) &&
-                  wishlistItems.some(
-                    (w) => (w.product_id || w._id || w.id) === productId
-                  );
+            <div
+              className="acc-home-slider"
+              ref={emblaRef}
+            >
 
-                return (
-                  <div
-                    className="acc-home-card"
-                    key={productId || index}
-                    onClick={() => handleProductClick(item)}
-                  >
-                    <div className="acc-home-img" style={{ background: "#e3e3e3" }}>
-                      <button
-                        className={`acc-home-wishlist ${isWishlisted ? "active" : ""
-                          }`}
-                        onClick={(e) => {
-                          e.stopPropagation();
+              <div className="acc-home-slider-container">
 
-                          if (isWishlisted) {
-                            dispatch(removeFromWishlist(productId));
 
-                            window.showNotification(
-                              "Removed from Wishlist",
-                              "info"
-                            );
-                          } else {
-                            dispatch(
-                              addToWishlist({
-                                ...item,
-                                product_id: productId,
-                              })
-                            );
+                {products.map((item, index) => {
 
-                            window.showNotification(
-                              "Added to Wishlist",
-                              "success"
-                            );
-                          }
-                        }}
+                  const productId =
+                    getProductId(item);
+
+
+                  const isWishlisted =
+                    wishlistItems.some(
+                      (w) =>
+                        String(
+                          w.product_id ||
+                          w._id ||
+                          w.id
+                        ) ===
+                        String(productId)
+                    );
+
+
+                  const brand =
+                    item.Brand_Name ||
+                    item.brand ||
+                    "BRAND";
+
+
+                  const category =
+                    item.Product_Subcategory ||
+                    item.category ||
+                    "Accessories";
+
+
+                  const name =
+                    item.Product_Name ||
+                    item.name ||
+                    "Product";
+
+
+                  const image =
+                    item.image_01 ||
+                    item.image ||
+                    "/no-image.png";
+
+
+                  const price =
+                    Math.round(
+                      Number(
+                        item.MRP ||
+                        item.Product_price ||
+                        item.price ||
+                        0
+                      )
+                    );
+
+
+                  const oldPrice =
+                    Math.round(
+                      Number(
+                        item.Product_price ||
+                        item.price ||
+                        item.Product_old_price ||
+                        0
+                      )
+                    );
+
+
+                  return (
+
+                    <div
+                      className="acc-home-slide"
+                      key={
+                        productId ||
+                        index
+                      }
+                    >
+
+                      <div
+                        className="acc-home-card"
+                        onClick={() =>
+                          handleProductClick(item)
+                        }
                       >
-                        {isWishlisted ? (
-                          <IoIosHeart />
-                        ) : (
-                          <IoIosHeartEmpty />
-                        )}
-                      </button>
 
-                      <img
-                        src={item.image_01 || item.image || "/no-image.png"}
-                        alt={item.Product_Name || item.name}
-                        style={{ mixBlendMode: "multiply" }}
-                      />
-                    </div>
 
-                    <div className="acc-home-info">
-                      <h5 className="acc-brand">
-                        {item.Brand_Name || "Brand"}
-                      </h5>
+                        {/* IMAGE */}
 
-                      <p className="acc-model">
-                        Model - {item.Model_number || "N/A"}
-                      </p>
+                        <div className="acc-home-img">
 
-                      <p className="acc-category">
-                        {item.Product_Subcategory}
-                      </p>
+                          {/* WISHLIST */}
 
-                      <div className="acc-home-price">
+                          <div
+                            className={`acc-home-wishlist ${
+                              isWishlisted
+                                ? "active"
+                                : ""
+                            }`}
+                            onClick={(e) => {
 
-                        <span className="acc-price">
-                          MRP ₹{Math.floor(Number(item.MRP || 0)).toLocaleString("en-IN")}
-                        </span>
+                              e.stopPropagation();
 
-                        {Number(item.totalReviews || 0) > 0 && (
-                          <span className="ecom-rating">
-                            <FaStar className="rating-star" />
-                            {Number(item.averageRating || 0).toFixed(1)} ({item.totalReviews})
-                          </span>
-                        )}
 
-                        {Number(item.Product_price || item.price || 0) >
-                          Number(item.MRP || 0) && (
-                            <del className="acc-old-price">
-                              ₹{Math.floor(
-                                Number(item.Product_price || item.price || 0)
-                              ).toLocaleString("en-IN")}
-                            </del>
-                          )}
+                              if (
+                                isWishlisted
+                              ) {
+
+                                dispatch(
+                                  removeFromWishlist(
+                                    productId
+                                  )
+                                );
+
+
+                                window.showNotification?.(
+                                  "Removed from Wishlist",
+                                  "info"
+                                );
+
+                              } else {
+
+                                dispatch(
+                                  addToWishlist({
+                                    ...item,
+                                    product_id:
+                                      productId,
+                                  })
+                                );
+
+
+                                window.showNotification?.(
+                                  "Added to Wishlist",
+                                  "success"
+                                );
+
+                              }
+
+                            }}
+                          >
+
+                            {isWishlisted ? (
+
+                              <IoIosHeart />
+
+                            ) : (
+
+                              <IoIosHeartEmpty />
+
+                            )}
+
+                          </div>
+
+
+                          {/* PRODUCT IMAGE */}
+
+                          <img
+                            src={image}
+                            alt={name}
+                            draggable={false}
+                          />
+
+                        </div>
+
+
+                        {/* INFO */}
+
+                        <div className="acc-home-info">
+
+
+                          <h5 className="acc-brand">
+
+                            {String(
+                              brand
+                            ).toUpperCase()}
+
+                          </h5>
+
+
+                          <p className="acc-model">
+
+                            Model -{" "}
+                            {item.Model_number ||
+                              "N/A"}
+
+                          </p>
+
+
+                          <p className="acc-category">
+
+                            {category}
+
+                          </p>
+
+
+                          {/* PRICE */}
+
+                          <div className="acc-home-price">
+
+
+                            <span className="acc-price">
+
+                              MRP ₹
+                              {formatPrice(
+                                price
+                              )}
+
+                            </span>
+
+
+                            {/* RATING */}
+
+                            {Number(
+                              item.totalReviews
+                            ) > 0 && (
+
+                              <span className="ecom-rating">
+
+                                <FaStar className="rating-star" />
+
+                                {Number(
+                                  item.averageRating ||
+                                    0
+                                ).toFixed(1)}
+
+                                (
+                                {
+                                  item.totalReviews
+                                }
+                                )
+
+                              </span>
+
+                            )}
+
+
+                            {/* OLD PRICE */}
+
+                            {oldPrice >
+                              price && (
+
+                              <span className="acc-old-price">
+
+                                ₹
+                                {formatPrice(
+                                  oldPrice
+                                )}
+
+                              </span>
+
+                            )}
+
+                          </div>
+
+                        </div>
 
                       </div>
+
                     </div>
-                  </div>
-                );
-              })}
+
+                  );
+
+                })}
+
+              </div>
+
             </div>
 
+
+            {/* RIGHT ARROW */}
+
             <button
+              type="button"
               className="acc-slide-btn acc-right"
-              onClick={() => scrollSlider("right")}
+              onClick={next}
+              aria-label="Next products"
             >
-              <MdKeyboardArrowRight />
+
+              <FaChevronRight />
+
             </button>
+
           </div>
+
         </div>
+
       </div>
+
     </section>
+
   );
 
 }
+
+export default AccessoriesSlider;
