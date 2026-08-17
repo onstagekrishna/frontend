@@ -349,23 +349,40 @@ export default function FilterProductByCategoryes() {
                   </div>
 
                   <div className="ecom-product-info">
-                    <h5 className="ecom-brand">{brand}</h5>
-                    <p className="ecom-model">Model: {model}</p>
-                    <p className="ecom-type">{type}</p>
-                    <h4 className="ecom-title">{name}</h4>
 
+                    {/* BRAND + RATING */}
+                    <div className="ecom-brand-row">
+                      <h5 className="ecom-brand">
+                        {brand}
+                      </h5>
+
+                      {Number(item?.totalReviews || 0) > 0 &&
+                        Number(item?.averageRating || 0) > 0 && (
+                          <span className="ecom-rating">
+                            <FaStar className="rating-star" />
+                            {Number(item.averageRating).toFixed(1)}
+                            <span className="rating-count">
+                              ({item.totalReviews})
+                            </span>
+                          </span>
+                        )}
+                    </div>
+
+                    {/* MODEL */}
+                    <p className="ecom-model">
+                      Model - {model}
+                    </p>
+
+                    {/* CATEGORY */}
+                    <p className="ecom-type">
+                      {type}
+                    </p>
+
+                    {/* PRICE + OLD PRICE */}
                     <div className="ecom-price-box">
                       <span className="ecom-price">
                         MRP ₹{mrp.toLocaleString("en-IN")}
                       </span>
-
-                      {Number(item.totalReviews) > 0 &&
-                        Number(item.averageRating) > 0 && (
-                          <span className="ecom-rating">
-                            <FaStar className="rating-star" />
-                            {Number(item.averageRating).toFixed(1)} ({item.totalReviews})
-                          </span>
-                        )}
 
                       {cutPrice > mrp && (
                         <span className="ecom-old-price">
@@ -373,6 +390,7 @@ export default function FilterProductByCategoryes() {
                         </span>
                       )}
                     </div>
+
                   </div>
                 </div>
               );

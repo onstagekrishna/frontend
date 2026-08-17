@@ -564,34 +564,34 @@ function Header() {
             Our Products <IoMdArrowDropdown />
           </li>
 
-         {mobileProductOpen && (
-  <div className="mobile-category-grid">
+          {mobileProductOpen && (
+            <div className="mobile-category-grid">
 
-    {categories.map((category, index) => (
-      <button
-        type="button"
-        className="mobile-category-card"
-        key={index}
-        onClick={() => handleCategoryClick(category.name)}
-      >
+              {categories.map((category, index) => (
+                <button
+                  type="button"
+                  className="mobile-category-card"
+                  key={index}
+                  onClick={() => handleCategoryClick(category.name)}
+                >
 
-        <img
-          src={category.image}
-          alt={category.name}
-          className="mobile-category-image"
-        />
+                  <img
+                    src={category.image}
+                    alt={category.name}
+                    className="mobile-category-image"
+                  />
 
-        <span className="mobile-category-overlay"></span>
+                  <span className="mobile-category-overlay"></span>
 
-        <span className="mobile-category-name">
-          {category.name}
-        </span>
+                  <span className="mobile-category-name">
+                    {category.name}
+                  </span>
 
-      </button>
-    ))}
+                </button>
+              ))}
 
-  </div>
-)}
+            </div>
+          )}
 
           {/* {!isAdmin && (
             <>

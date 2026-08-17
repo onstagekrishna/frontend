@@ -17,9 +17,9 @@ const LoginPopup = ({ onClose }) => {
   const getGreeting = () => {
     const hour = new Date().getHours();
 
-    if (hour < 12) return "Good Morning";
-    if (hour < 17) return "Good Afternoon";
-    if (hour < 21) return "Good Evening";
+    if (hour < 12) return "Good Morning !";
+    if (hour < 17) return "Good Afternoon !";
+    if (hour < 21) return "Good Evening !";
     return "Good Night";
   };
 
@@ -34,9 +34,9 @@ const LoginPopup = ({ onClose }) => {
         {/* CONTENT */}
         <div className="popup-content">
           {/* 🔥 Dynamic Greeting */}
-          <h2>{getGreeting()} 👋</h2>
+          <h2>{getGreeting()}</h2>
 
-          <h3>Welcome Back</h3>
+          {/* <h3>Welcome </h3> */}
 
           <p>
             Login to access your cart, wishlist & exclusive deals
