@@ -17,6 +17,7 @@ import {
 } from "react-icons/io";
 
 import { useNavigate } from "react-router-dom";
+import { slugify } from "../utils/slugify";
 
 import {
   useDispatch,
@@ -309,11 +310,12 @@ function AccessoriesSlider() {
   const handleProductClick = (item) => {
 
     const id = getProductId(item);
+    const identifier = slugify(item.Product_Name) || id;
 
-    if (!id) return;
+    if (!identifier) return;
 
     navigate(
-      `/productDetails/${id}`,
+      `/productDetails/${identifier}`,
       {
         state: {
           ...item,

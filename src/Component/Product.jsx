@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { slugify } from "../utils/slugify";
 import { FaStar } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -331,15 +332,13 @@ const AllProducts = () => {
   // ==========================================
 
   const handlePage = (item) => {
-    const id =
-      getProductId(item);
+    const id = getProductId(item);
+    const identifier = slugify(item.Product_Name) || id;
 
-    if (!id) {
-      return;
-    }
+    if (!identifier) return;
 
     navigate(
-      `/productDetails/${id}`,
+      `/productDetails/${identifier}`,
       {
         state: item,
       }

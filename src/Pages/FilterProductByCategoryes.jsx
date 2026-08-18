@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { slugify } from "../utils/slugify";
 import { FiFilter } from "react-icons/fi";
 import { IoClose } from "react-icons/io5";
 import { useDispatch, useSelector } from "react-redux";
@@ -165,7 +166,8 @@ export default function FilterProductByCategoryes() {
 
   const handleProductClick = (product) => {
     console.log("FULL PRODUCT:", product);
-    navigate(`/productDetails/${product.product_id}`, { state: product });
+    const identifier = slugify(product.Product_Name) || product.product_id;
+    navigate(`/productDetails/${identifier}`, { state: product });
   };
 
   return (

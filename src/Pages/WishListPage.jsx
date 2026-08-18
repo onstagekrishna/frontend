@@ -2,6 +2,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { removeFromWishlist } from "../Redux/Slices/WishlistSlice";
 import { addToCart } from "../Redux/Slices/CartSlice";
 import { useNavigate } from "react-router-dom";
+import { slugify } from "../utils/slugify";
 import { MdDelete } from "react-icons/md";
 import { FaStar } from "react-icons/fa";
 
@@ -98,7 +99,7 @@ export default function WishlistPage() {
                   key={id}
                   className="ecom-product-card wishlist-card"
                   onClick={() =>
-                    navigate(`/productDetails/${id}`, {
+                    navigate(`/productDetails/${slugify(name || item?.Product_Name) || id}`, {
                       state: item,
                     })
                   }

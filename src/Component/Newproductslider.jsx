@@ -24,6 +24,7 @@ import {
   useDispatch,
   useSelector,
 } from "react-redux";
+import { slugify } from "../utils/slugify";
 
 import useEmblaCarousel from "embla-carousel-react";
 import Autoplay from "embla-carousel-autoplay";
@@ -151,9 +152,10 @@ function Newproductslider() {
       item.product_id ||
       item.id;
 
-    if (!id) return;
+    const identifier = slugify(item.Product_Name) || id;
+    if (!identifier) return;
 
-    navigate(`/productDetails/${id}`, {
+    navigate(`/productDetails/${identifier}`, {
       state: {
         ...item,
         product_id: id,

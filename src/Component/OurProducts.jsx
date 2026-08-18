@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { GiGuitar } from "react-icons/gi";
 import { IoStar } from "react-icons/io5";
-import { Navigate, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { slugify } from "../utils/slugify";
 
 const catogeryesProducts = [
     {
@@ -199,7 +200,7 @@ export default function OurProducts() {
 
     const [topProducts] = useState(catogeryesProducts);
     const [activeIndex, setActiveIndex] = useState(null);
-    const  Navigate = useNavigate();
+    const navigate = useNavigate();
 
 
 
@@ -239,7 +240,10 @@ export default function OurProducts() {
                                         topProducts.map((topProductsItems) => (
                                             <div className="tranding-products-of-us"
                                              key={topProductsItems.id}
-                                              onClick={() => Navigate("/productDetails", { state:topProductsItems})}>
+                                              onClick={() => {
+                                                const identifier = slugify(topProductsItems.Product_Name || topProductsItems.name) || topProductsItems.id;
+                                                navigate(`/productDetails/${identifier}`, { state: topProductsItems });
+                                              }}>
 
                                                 <div className="rating-and-discount">
                                                     <div className="discount">

@@ -29,13 +29,19 @@ export default function RefundedOrder() {
 
       console.log("Refund Orders:", data);
 
-      setRefundOrders(
+      const orders =
         data.orders ||
-          data.data ||
-          data.refundedOrders ||
-          data.refundOrders ||
-          data.order ||
-          []
+        data.data ||
+        data.refundedOrders ||
+        data.refundOrders ||
+        data.order ||
+        [];
+
+      setRefundOrders(
+        orders.sort(
+          (a, b) =>
+            new Date(b.createdAt || 0) - new Date(a.createdAt || 0)
+        )
       );
     } catch (error) {
       console.error("Refund order error:", error);
@@ -46,6 +52,7 @@ export default function RefundedOrder() {
 
   return (
     <div className="onord-page">
+
       <div className="onord-header">
         <div>
           <h1>Refund Orders</h1>
@@ -56,11 +63,17 @@ export default function RefundedOrder() {
       </div>
 
       <div className="onord-table-box">
+
         {loading ? (
-          <div className="onord-empty">Loading refund orders...</div>
+          <div className="onord-empty">
+            Loading refund orders...
+          </div>
         ) : refundOrders.length > 0 ? (
+
           <div className="onord-table-wrap">
+
             <table className="onord-table">
+
               <thead>
                 <tr>
                   <th>#</th>
@@ -74,21 +87,19 @@ export default function RefundedOrder() {
               </thead>
 
               <tbody>
+
                 {refundOrders.map((order, index) => {
-                  const user =
-                    typeof order.user === "object" ? order.user : {};
 
+                  // SAME CUSTOMER NAME LOGIC AS ORDERS
                   const customerName =
-                    `${user.firstName || ""} ${user.lastName || ""}`.trim() ||
-                    order.customerName ||
-                    order.name ||
-                    "N/A";
+                    `${order.customerFirstName || ""} ${
+                      order.customerLastName || ""
+                    }`.trim() || "N/A";
 
+                  // SAME EMAIL / PHONE LOGIC AS ORDERS
                   const contact =
-                    user.email ||
-                    user.contactNumber ||
-                    order.email ||
-                    order.phone ||
+                    order.customerEmail ||
+                    order.customerPhone ||
                     "N/A";
 
                   const orderId =
@@ -97,32 +108,68 @@ export default function RefundedOrder() {
                     order._id ||
                     "N/A";
 
-                  const amount = order.totalAmount || order.amount || 0;
+                  const amount =
+                    order.totalAmount ||
+                    order.amount ||
+                    0;
 
                   return (
                     <tr key={order._id || index}>
+
                       <td>{index + 1}</td>
-                      <td>{customerName}</td>
-                      <td>{contact}</td>
-                      <td>{orderId}</td>
-                      <td>₹{amount}</td>
-                      <td>{order.status || "Refunded"}</td>
+
+                      {/* CUSTOMER NAME */}
+                      <td>
+                        {customerName}
+                      </td>
+
+                      {/* EMAIL / PHONE */}
+                      <td>
+                        {contact}
+                      </td>
+
+                      {/* ORDER ID */}
+                      <td>
+                        {orderId}
+                      </td>
+
+                      {/* AMOUNT */}
+                      <td>
+                        ₹{amount}
+                      </td>
+
+                      {/* STATUS */}
+                      <td>
+                        {order.status || "Refunded"}
+                      </td>
+
+                      {/* DATE */}
                       <td>
                         {order.createdAt
-                          ? new Date(order.createdAt).toLocaleDateString(
-                              "en-IN"
-                            )
+                          ? new Date(
+                              order.createdAt
+                            ).toLocaleDateString("en-IN")
                           : "N/A"}
                       </td>
+
                     </tr>
                   );
                 })}
+
               </tbody>
+
             </table>
+
           </div>
+
         ) : (
-          <div className="onord-empty">No refund orders found</div>
+
+          <div className="onord-empty">
+            No refund orders found
+          </div>
+
         )}
+
       </div>
     </div>
   );

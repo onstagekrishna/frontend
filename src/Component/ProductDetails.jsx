@@ -10,7 +10,7 @@ import { addToWishlist, removeFromWishlist, } from "../Redux/Slices/WishlistSlic
 import LoadingIcon from "./LoadingIcon";
 
 export default function ProductDetails() {
-  const { product_id } = useParams();
+  const { Product_Name } = useParams();
   const dispatch = useDispatch();
   const location = useLocation();
 
@@ -38,6 +38,16 @@ export default function ProductDetails() {
   };
 
   const getProductId = (item) => item?.product_id || item?._id || item?.id;
+  const slugify = (text) => {
+  return text
+    ?.toString()
+    .toLowerCase()
+    .trim()
+    .replace(/&/g, "and")
+    .replace(/[^a-z0-9\s-]/g, "")
+    .replace(/\s+/g, "-")
+    .replace(/-+/g, "-");
+}
 
   const validImage = (img) => {
     return (
@@ -80,21 +90,34 @@ export default function ProductDetails() {
           const allProducts = res.data.products;
           setAllProducts(allProducts);
 
-          console.log("URL Product ID:", product_id);
+          console.log("URL Product Name:", Product_Name);
           console.log("First 5 Products:", allProducts.slice(0, 5));
           console.log(
             "All Product IDs:",
             allProducts.map((item) => item.product_id)
           );
 
-          let currentProduct = location.state;
+          let currentProduct = null;
 
-          if (!currentProduct) {
-            currentProduct = allProducts.find(
-              (item) => String(item.product_id) === String(product_id)
-            );
+          if (Product_Name) {
+            const decodedParam = decodeURIComponent(Product_Name);
+            const targetSlug = slugify(decodedParam);
 
-            console.log("Found Product:", currentProduct);
+            currentProduct = allProducts.find((item) => {
+              const itemSlug = slugify(item.Product_Name);
+              const itemId = String(item.product_id || item._id || item.id || "");
+              const itemName = item.Product_Name?.toLowerCase().trim();
+
+              return (
+                (itemSlug && itemSlug === targetSlug) ||
+                (itemName && itemName === decodedParam.toLowerCase().trim()) ||
+                (itemId && itemId === String(Product_Name))
+              );
+            });
+          }
+
+          if (!currentProduct && location.state) {
+            currentProduct = location.state;
           }
 
           if (currentProduct) {
@@ -110,7 +133,7 @@ export default function ProductDetails() {
     }
 
     fetchProduct();
-  }, [product_id, location.state]);
+  }, [Product_Name, location.state]);
 
   useEffect(() => {
     if (!productDetails || allProducts.length === 0) return;
@@ -502,7 +525,7 @@ export default function ProductDetails() {
                 console.log(item);
                 return (
                   <Link
-                    to={`/productDetails/${getProductId(item)}`}
+                    to={`/productDetails/${slugify(item.Product_Name) || getProductId(item)}`}
                     state={item}
                     className="ecom-product-card"
                     key={getProductId(item)}

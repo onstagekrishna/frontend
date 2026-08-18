@@ -225,7 +225,8 @@ function AppContent() {
 
       <Routes>
         <Route path="/" element={<Home productRef={productsRef} />} />
-        <Route path="/productDetails/:product_id" element={<ProductDetails />} />
+        <Route path="/product/:Product_Name" element={<ProductDetails />} />
+        <Route path="/productDetails/:Product_Name" element={<ProductDetails />} />
         <Route path="/ourProductPage" element={<OurProductCat />} />
 
         <Route path="/signup" element={<Signup />} />
