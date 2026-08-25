@@ -561,7 +561,7 @@ function Header() {
             className="mobile-products-title"
             onClick={() => setMobileProductOpen(!mobileProductOpen)}
           >
-            Our Products <IoMdArrowDropdown />
+            Our Category<IoMdArrowDropdown />
           </li>
 
           {mobileProductOpen && (

@@ -6514,8 +6514,8 @@ font-size:12px;
 }
 
 .kr-search-gif {
-  width: 34px;
-  height: 34px;
+  width: 28px;
+  height: 28px;
   object-fit: contain;
   display: block;
 }
@@ -13500,8 +13500,8 @@ height:150px;
 }
 
 .search-modal-header span {
-  font-size: 22px;
-  font-weight: 600;
+  font-size: 17px;
+  font-weight: 400;
 }
 
 .search-modal-header .close-icon {
@@ -13518,12 +13518,12 @@ height:150px;
 
 .search-modal input {
   width: 100% !important;
-  height: 50px;
+  height: 35px;
   box-sizing: border-box;
-  border: 2px solid #ddd;
-  border-radius: 28px;
+  border: 1px solid #ddd;
+  border-radius: 0px;
   padding: 0 50px 0 18px;
-  font-size: 16px;
+  font-size: 12px;
   outline: none;
 }
 
@@ -13577,7 +13577,7 @@ height:150px;
   input,
   textarea,
   select {
-    font-size: 16px !important;
+    font-size: 12px !important;
   }
 
   html,
