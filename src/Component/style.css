@@ -413,7 +413,7 @@ section {
   .no-products-found {
     padding: 65px;
     height: auto;
-    min-height: 60vh;
+    min-height: 80vh;
   }
 
   .no-products-img {
