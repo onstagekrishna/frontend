@@ -615,7 +615,10 @@ function Header() {
                 </li>
               )}
 
-              <li onClick={handleLogout}>Logout</li>
+              <li onClick={handleLogout} className="logout-menu-item">
+                <IoIosLogOut className="logout-icon" />
+                <span>Logout</span>
+              </li>
             </>
           ) : (
             <li onClick={() => closeMobileAndNavigate("/login")}>Login</li>

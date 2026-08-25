@@ -411,7 +411,7 @@ section {
 @media (max-width:768px) {
 
   .no-products-found {
-    padding: 20px;
+    padding: 65px;
     height: auto;
     min-height: 60vh;
   }
@@ -442,7 +442,7 @@ section {
 
   .back-home-btn {
     width: 100%;
-    max-width: 220px;
+    max-width: 115px;
   }
 
 }
@@ -453,13 +453,13 @@ section {
 }
 
 .no-products-found h2 {
-  font-size: 28px;
+  font-size: 16px;
   font-weight: 600;
   margin-bottom: 3px;
 }
 
 .no-products-found p {
-  font-size: 16px;
+  font-size: 13px;
   color: #666;
   margin-bottom: 20px;
 }
@@ -469,8 +469,8 @@ section {
   color: #fff;
   border: none;
   padding: 10px 22px;
-  font-size: 15px;
-  border-radius: 6px;
+  font-size: 11px;
+  border-radius: 3px;
   cursor: pointer;
   transition: 0.3s;
 }
@@ -792,16 +792,17 @@ section {
     display: none !important;
   }
 
-  .mobile-header {
-    display: flex !important;
-    align-items: center;
-    justify-content: space-between;
-    width: 100%;
-    padding: 0px 2px;
-    box-sizing: border-box;
-    overflow: hidden;
-    gap: 10px;
-  }
+.mobile-header {
+  display: flex !important;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 0px 2px;
+  box-sizing: border-box;
+  overflow: visible;
+  gap: 10px;
+  position: relative;
+}
 
   .mobile-logo {
     flex: 1;
@@ -836,12 +837,17 @@ section {
 
 
 
-  .mobile-search {
-    display: block;
-    width: 100%;
-    padding: 10px 15px;
-    background: #fff;
-  }
+ .mobile-search {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  padding: 10px 15px;
+  background: #fff;
+  z-index: 99999;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+  box-sizing: border-box;
+}
 }
 
 /* 🔥 TOPBAR */
@@ -6040,20 +6046,20 @@ font-size:13px;
 }
 
 .empty-cart-gif{
-width:170px;
+width:150px;
 }
 
 .empty-title{
-font-size:22px;
+font-size:16px;
 }
 
 .empty-desc{
-font-size:13px;
+font-size:12px;
 }
 
 .shop-now-btn{
-height:42px;
-font-size:13px;
+height:34px;
+font-size:12px;
 }
 
 }
@@ -6075,27 +6081,27 @@ font-size:13px;
 }
 
 .empty-cart-gif{
-    width:220px;
+    width:150px;
     max-width:100%;
     height:auto;
     
 }
 
 .empty-title{
-    font-size:24px;
+    font-size:16px;
     font-weight:700;
     color:#111;
     margin-bottom:5px;
 }
 
 .empty-desc{
-    font-size:16px;
+    font-size:12px;
     color:#666;
     margin-bottom:24px;
 }
 
 .shop-now-btn{
-    min-width:163px;
+    min-width:133px;
     height:35px;
     border:none;
     border-radius:8px;
@@ -6120,20 +6126,20 @@ font-size:13px;
 }
 
 .empty-cart-gif{
-    width:240px;
+    width:150px;
 }
 
 .empty-title{
-    font-size:32px;
+    font-size:16px;
 }
 
 .empty-desc{
-    font-size:15px;
+    font-size:12px;
 }
 
 .shop-now-btn{
     width:100%;
-    max-width:240px;
+    max-width:140px;
 }
 
 }
@@ -6141,19 +6147,19 @@ font-size:13px;
 @media(max-width:480px){
 
 .empty-cart-gif{
-    width:180px;
+    width:150px;
 }
 
 .empty-title{
-    font-size:24px;
+    font-size:16px;
 }
 
 .empty-desc{
-    font-size:14px;
+    font-size:12px;
 }
 
 .shop-now-btn{
-    height:44px;
+    height:34px;
     font-size:14px;
 }
 
@@ -6365,17 +6371,18 @@ font-size:13px;
 }
 
 .content-add-to-cart h1 {
-  font-size: 28px;
+  font-size: 16px;
   font-weight: 600;
   margin-bottom: 12px;
   color: #222;
 }
 
 .content-add-to-cart p {
-  font-size: 16px;
+  font-size: 12px;
   color: #555;
   margin-bottom: 5px;
   line-height: 1.6;
+  padding: 1px 20px 1px 20px;
 }
 
 /* Button */
@@ -6653,16 +6660,24 @@ font-size:13px;
 
 /* MOBILE SEARCH */
 .mobile-search {
-  padding: 10px 20px;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  padding: 10px 15px;
   background: #fff;
   border-top: 1px solid #eee;
+  box-shadow: 0 4px 12px rgba(0,0,0,.12);
+  z-index: 99999;
+  box-sizing: border-box;
 }
 
 .mobile-search input {
   width: 100%;
-  padding: 10px;
-  border-radius: 8px;
-  border: 2px solid #eee;
+  padding: 10px 15px;
+  border-radius: 30px;
+  border: 2px solid #ddd;
+  box-sizing: border-box;
 }
 
 /* RESPONSIVE */
@@ -6846,7 +6861,7 @@ font-size:13px;
     margin: 0;
 
     border: none;
-    border-radius: 10px;
+    border-radius: 0px;
 
     overflow: hidden;
 
@@ -8357,18 +8372,18 @@ font-size:20px;
 }
 
 .empty-gif {
-  width: 220px;
-  margin-bottom: 20px;
+  width: 150px;
+  margin-bottom: 0px;
 }
 
 .content-add-to-cart h1 {
-  font-size: 24px;
+  font-size: 16px;
   margin-bottom: 10px;
 }
 
 .content-add-to-cart p {
   color: #666;
-  font-size: 14px;
+  font-size: 11px;
   max-width: 400px;
 }
 
@@ -13443,3 +13458,132 @@ height:150px;
 
 /* product view more button  */
 
+/* =========================================
+   MOBILE SEARCH MODAL
+========================================= */
+
+.search-modal-overlay {
+  position: fixed !important;
+  inset: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  background: rgba(0, 0, 0, 0.45);
+  z-index: 999999 !important;
+
+  display: flex !important;
+  align-items: flex-start !important;
+  justify-content: center !important;
+
+  padding: 0 !important;
+  box-sizing: border-box;
+}
+
+.search-modal {
+  width: 100%;
+  max-width: 600px;
+  background: #fff;
+  padding: 18px 16px 22px;
+  box-sizing: border-box;
+
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.18);
+
+  position: relative;
+  z-index: 1000000;
+}
+
+.search-modal-header {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.search-modal-header span {
+  font-size: 22px;
+  font-weight: 600;
+}
+
+.search-modal-header .close-icon {
+  font-size: 25px;
+  cursor: pointer;
+  color: #111;
+}
+
+/* SearchBar ke andar input */
+.search-modal .search-box,
+.search-modal form {
+  width: 100%;
+}
+
+.search-modal input {
+  width: 100% !important;
+  height: 50px;
+  box-sizing: border-box;
+  border: 2px solid #ddd;
+  border-radius: 28px;
+  padding: 0 50px 0 18px;
+  font-size: 16px;
+  outline: none;
+}
+
+.search-modal input:focus {
+  border-color: #f58220;
+}
+
+
+/* =========================================
+   MOBILE ONLY
+========================================= */
+
+@media (max-width: 768px) {
+
+  .search-modal-overlay {
+    display: flex !important;
+    align-items: flex-start !important;
+  }
+
+  .search-modal {
+    width: 100vw;
+    max-width: none;
+    min-height: auto;
+    padding: 18px 16px 20px;
+  }
+
+}
+
+
+/* =========================================
+   HIDE OLD MOBILE SEARCH
+========================================= */
+
+@media (max-width: 768px) {
+  .mobile-search {
+    display: none !important;
+  }
+}
+.logout-menu-item {
+  display: flex !important;
+  align-items: center;
+  gap: 12px;
+}
+
+.logout-icon {
+  font-size: 24px;
+  flex-shrink: 0;
+}
+/* ------------------------------------------ */
+@media (max-width: 768px) {
+  input,
+  textarea,
+  select {
+    font-size: 16px !important;
+  }
+
+  html,
+  body {
+    overflow-x: hidden;
+  }
+}
+
+/* ------------------------------------- */
