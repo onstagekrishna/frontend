@@ -94,25 +94,21 @@ export default function Slider() {
 
       <div className="slider-marquee">
         <div className="slider-marquee-track">
-          <span>
-            Explore Premium Musical Instruments |
-            100% Genuine Products |
-            Free Shipping Across India |
-            Secure Checkout Experience |
-            Trusted Music Store |
-            Dedicated Customer Support |
-            Top Global Brands Available |
-          </span>
+<span>
+   Welcome to the Newly Launched Onstage Website | 
+  Prices May Vary Slightly During Our Initial Launch Period | 
+  After Placing Your Order, Feel Free to Call or Message Us for Quick Confirmation & Assistance | 
+  Your Support Helps Us Serve You Better | 
+  Thank You for Being a Valued Part of the Onstage Family  |
+</span>
 
-          <span>
-            Explore Premium Musical Instruments |
-            100% Genuine Products |
-            Free Shipping Across India |
-            Secure Checkout Experience |
-            Trusted Music Store |
-            Dedicated Customer Support |
-            Top Global Brands Available |
-          </span>
+<span>
+   Welcome to the Newly Launched Onstage Website | 
+  Prices May Vary Slightly During Our Initial Launch Period | 
+  After Placing Your Order, Feel Free to Call or Message Us for Quick Confirmation & Assistance | 
+  Your Support Helps Us Serve You Better | 
+  Thank You for Being a Valued Part of the Onstage Family  |
+</span>
         </div>
       </div>
 

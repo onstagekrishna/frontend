@@ -614,3 +614,980 @@
 }
 
 /* updated order css end  */
+
+/* =========================================================
+   ORDERS PAGE
+========================================================= */
+
+.onord-page {
+  width: 100%;
+  min-height: 100vh;
+  padding: 30px 34px 50px;
+  background: #f5f7fc;
+  box-sizing: border-box;
+  color: #14213d;
+}
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.onord-header {
+  margin-bottom: 28px;
+}
+
+.onord-header h1 {
+  margin: 0;
+  font-size: 32px;
+  font-weight: 800;
+  color: #14213d;
+}
+
+.onord-header p {
+  margin: 6px 0 0;
+  font-size: 14px;
+  color: #75819a;
+}
+
+/* =========================================================
+   STATS
+========================================================= */
+
+.onord-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  margin-bottom: 28px;
+}
+
+.onord-card {
+  min-height: 120px;
+  padding: 24px 28px;
+  background: #ffffff;
+  border: 1px solid #edf0f6;
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  box-sizing: border-box;
+  box-shadow: 0 8px 25px rgba(30, 43, 75, 0.05);
+}
+
+.onord-card h4 {
+  margin: 0 0 8px;
+  color: #8792a8;
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+}
+
+.onord-card h2 {
+  margin: 0;
+  color: #172642;
+  font-size: 32px;
+  font-weight: 800;
+}
+
+.onord-card-icon {
+  width: 58px;
+  height: 58px;
+  min-width: 58px;
+  border-radius: 17px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  font-weight: 700;
+}
+
+.paid-icon {
+  color: #199451;
+  background: #e9f8ef;
+}
+
+.pending-icon {
+  color: #dc7900;
+  background: #fff2df;
+}
+
+.total-icon {
+  color: #b43c8d;
+  background: #faeafa;
+}
+
+/* =========================================================
+   TABS
+========================================================= */
+
+.onord-tabs {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 22px;
+}
+
+.onord-tabs button {
+  border: 1px solid #e7eaf1;
+  background: #ffffff;
+  color: #52617a;
+  min-width: 195px;
+  padding: 14px 20px;
+  border-radius: 14px;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  transition: 0.25s ease;
+}
+
+.onord-tabs button:hover {
+  border-color: #f58a18;
+}
+
+.onord-tabs button.active {
+  background: #ff830f;
+  border-color: #ff830f;
+  color: #ffffff;
+  box-shadow: 0 8px 20px rgba(255, 131, 15, 0.2);
+}
+
+.onord-tabs button span {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: #f2f3f7;
+  color: #65718a;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+}
+
+.onord-tabs button.active span {
+  background: rgba(255, 255, 255, 0.22);
+  color: #ffffff;
+}
+
+/* =========================================================
+   TABLE
+========================================================= */
+
+.onord-table-box {
+  background: #ffffff;
+  border: 1px solid #e8ebf1;
+  border-radius: 22px;
+  overflow: hidden;
+  box-shadow: 0 8px 28px rgba(30, 43, 75, 0.04);
+}
+
+.onord-table-wrap {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.onord-table {
+  width: 100%;
+  min-width: 1050px;
+  border-collapse: collapse;
+}
+
+.onord-table thead {
+  background: #fafbfe;
+}
+
+.onord-table th {
+  padding: 18px 20px;
+  text-align: left;
+  white-space: nowrap;
+  color: #66728a;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.4px;
+  border-bottom: 1px solid #e9ecf2;
+}
+
+.onord-table td {
+  padding: 20px;
+  border-bottom: 1px solid #edf0f4;
+  color: #25334e;
+  font-size: 14px;
+  vertical-align: middle;
+}
+
+.onord-table tbody tr {
+  transition: 0.2s ease;
+}
+
+.onord-table tbody tr:hover {
+  background: #fcfcff;
+}
+
+.onord-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/* =========================================================
+   CUSTOMER
+========================================================= */
+
+.onord-customer {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  white-space: nowrap;
+}
+
+.onord-avatar {
+  width: 42px;
+  height: 42px;
+  min-width: 42px;
+  border-radius: 50%;
+  background: #faeafa;
+  color: #b23f8e;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  font-weight: 800;
+}
+
+.onord-customer strong {
+  color: #273650;
+  font-size: 14px;
+}
+
+.onord-order-id {
+  color: #7c879c;
+  font-size: 13px;
+  white-space: nowrap;
+}
+
+.onord-amount {
+  color: #1b2b46;
+  white-space: nowrap;
+  font-size: 15px;
+}
+
+.warehouse-stock {
+  min-width: 44px;
+  height: 34px;
+  padding: 0 12px;
+  border-radius: 11px;
+  background: #f4f5f8;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  color: #68748a;
+}
+
+/* =========================================================
+   VIEW ITEMS BUTTON
+========================================================= */
+
+.view-items-btn {
+  border: none;
+  background: #ff8310;
+  color: #ffffff;
+  padding: 11px 14px 11px 17px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  white-space: nowrap;
+  transition: 0.25s ease;
+}
+
+.view-items-btn:hover {
+  background: #ed7304;
+  transform: translateY(-1px);
+  box-shadow: 0 7px 18px rgba(255, 131, 16, 0.25);
+}
+
+.view-items-arrow {
+  width: 23px;
+  height: 23px;
+  border-radius: 7px;
+  background: rgba(255, 255, 255, 0.18);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* =========================================================
+   EMPTY
+========================================================= */
+
+.onord-empty {
+  min-height: 220px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #7b879b;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+/* =========================================================
+   MAIN TABLE PAGINATION
+========================================================= */
+
+.onord-pagination {
+  margin-top: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.onord-pagination > button,
+.onord-page-numbers button {
+  border: 1px solid #e2e6ed;
+  background: #ffffff;
+  color: #4e5d77;
+  min-width: 40px;
+  height: 40px;
+  padding: 0 13px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 700;
+  transition: 0.2s ease;
+}
+
+.onord-pagination > button:hover:not(:disabled),
+.onord-page-numbers button:hover {
+  border-color: #ff8310;
+  color: #ff8310;
+}
+
+.onord-pagination button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.onord-page-numbers {
+  display: flex;
+  gap: 7px;
+}
+
+.onord-page-numbers button.active {
+  background: #ff8310;
+  border-color: #ff8310;
+  color: #ffffff;
+}
+
+/* =========================================================
+   MODAL OVERLAY
+========================================================= */
+
+.onord-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+  background: rgba(21, 30, 48, 0.67);
+  backdrop-filter: blur(7px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 28px;
+  box-sizing: border-box;
+}
+
+/* =========================================================
+   MODAL
+========================================================= */
+
+.onord-modal {
+  width: min(1180px, 100%);
+  max-height: calc(100vh - 55px);
+  background: #ffffff;
+  border-radius: 27px;
+  overflow-y: auto;
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.25);
+  position: relative;
+  animation: onordModalIn 0.2s ease;
+}
+
+@keyframes onordModalIn {
+  from {
+    opacity: 0;
+    transform: translateY(15px) scale(0.98);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* =========================================================
+   MODAL HEADER
+========================================================= */
+
+.onord-modal-header {
+  padding: 25px 30px 22px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid #e9edf3;
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  background: #ffffff;
+}
+
+.onord-modal-header h2 {
+  margin: 0;
+  color: #172642;
+  font-size: 28px;
+  font-weight: 800;
+}
+
+.onord-modal-header p {
+  margin: 6px 0 0;
+  color: #8290a6;
+  font-size: 14px;
+}
+
+.onord-modal-header p strong {
+  color: #4b5b76;
+}
+
+.onord-modal-close {
+  width: 48px;
+  height: 48px;
+  border: none;
+  border-radius: 50%;
+  background: #f2f4f8;
+  color: #5b687e;
+  font-size: 29px;
+  line-height: 1;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.onord-modal-close:hover {
+  background: #ff8310;
+  color: #ffffff;
+  transform: rotate(5deg);
+}
+
+/* =========================================================
+   CUSTOMER / ORDER INFO
+========================================================= */
+
+.onord-order-info {
+  padding: 22px 30px;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 12px;
+  border-bottom: 1px solid #edf0f4;
+}
+
+.order-info-box {
+  min-height: 76px;
+  padding: 13px 15px;
+  background: #f8f9fb;
+  border-radius: 13px;
+  box-sizing: border-box;
+}
+
+.order-info-box span {
+  display: block;
+  margin-bottom: 7px;
+  color: #8994a7;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+}
+
+.order-info-box strong {
+  color: #293954;
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.4;
+  word-break: break-word;
+}
+
+.address-box {
+  grid-column: span 2;
+}
+
+.status-badge {
+  display: inline-flex;
+  padding: 5px 10px;
+  border-radius: 7px;
+  background: #eaf8ef;
+  color: #13894a !important;
+  font-size: 12px !important;
+}
+
+.status-badge.pending {
+  background: #fff2df;
+  color: #d87a00 !important;
+}
+
+.status-badge.processing {
+  background: #eef4ff;
+  color: #396fc2 !important;
+}
+
+.status-badge.shipped {
+  background: #f0eaff;
+  color: #7351b8 !important;
+}
+
+.status-badge.delivered {
+  background: #eaf8ef;
+  color: #13894a !important;
+}
+
+.status-badge.cancelled {
+  background: #ffeded;
+  color: #d33f3f !important;
+}
+
+/* =========================================================
+   PRODUCTS
+========================================================= */
+
+.onord-products-container {
+  padding: 24px 30px 10px;
+}
+
+.onord-products-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 15px;
+}
+
+.onord-products-heading h3 {
+  margin: 0;
+  color: #172642;
+  font-size: 20px;
+  font-weight: 800;
+}
+
+.onord-products-heading span {
+  display: block;
+  margin-top: 4px;
+  color: #8792a7;
+  font-size: 12px;
+}
+
+.popup-page-info {
+  color: #7c889e;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+/* =========================================================
+   PRODUCT CARD
+========================================================= */
+
+.onord-product-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.onord-product-card {
+  padding: 16px;
+  border: 1px solid #e1e5ec;
+  border-radius: 18px;
+  background: #ffffff;
+  display: flex;
+  align-items: stretch;
+  gap: 20px;
+  transition: 0.2s ease;
+}
+
+.onord-product-card:hover {
+  border-color: #f0d1e6;
+  box-shadow: 0 7px 22px rgba(35, 46, 75, 0.05);
+}
+
+/* =========================================================
+   PRODUCT IMAGE
+========================================================= */
+
+.onord-product-image-wrap {
+  width: 160px;
+  min-width: 160px;
+  height: 150px;
+  border-radius: 14px;
+  background: #f7f8fa;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.onord-product-image {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  padding: 9px;
+  box-sizing: border-box;
+}
+
+.no-product-image {
+  color: #9ba4b4;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+/* =========================================================
+   PRODUCT DETAILS
+========================================================= */
+
+.onord-product-details {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.onord-product-details h3 {
+  margin: 0 0 16px;
+  color: #172642;
+  font-size: 20px;
+  font-weight: 800;
+}
+
+.product-detail-grid {
+  display: grid;
+  grid-template-columns: 1.3fr 0.8fr 0.8fr;
+  gap: 12px;
+}
+
+.product-detail-item {
+  min-height: 68px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: #f7f8fa;
+  box-sizing: border-box;
+}
+
+.product-detail-item span {
+  display: block;
+  margin-bottom: 7px;
+  color: #8a95a8;
+  font-size: 10px;
+  font-weight: 800;
+}
+
+.product-detail-item strong {
+  display: block;
+  color: #2b3a55;
+  font-size: 14px;
+  line-height: 1.3;
+  word-break: break-word;
+}
+
+.price-item strong {
+  color: #b43d8c;
+  font-size: 19px;
+}
+
+.qty-item strong {
+  color: #16874b;
+  font-size: 17px;
+}
+
+/* =========================================================
+   POPUP PAGINATION
+========================================================= */
+
+.popup-pagination {
+  padding: 15px 30px 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.popup-pagination > button,
+.popup-page-numbers button {
+  height: 38px;
+  min-width: 38px;
+  padding: 0 12px;
+  border: 1px solid #e1e5eb;
+  background: #ffffff;
+  color: #55627a;
+  border-radius: 9px;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 700;
+  transition: 0.2s ease;
+}
+
+.popup-pagination button:hover:not(:disabled),
+.popup-page-numbers button:hover {
+  border-color: #ff8310;
+  color: #ff8310;
+}
+
+.popup-pagination button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.popup-page-numbers {
+  display: flex;
+  gap: 6px;
+}
+
+.popup-page-numbers button.active {
+  color: #ffffff;
+  background: #ff8310;
+  border-color: #ff8310;
+}
+
+.popup-no-products {
+  padding: 50px;
+  text-align: center;
+  color: #8792a6;
+}
+
+/* =========================================================
+   MODAL FOOTER
+========================================================= */
+
+.onord-modal-footer {
+  padding: 20px 30px;
+  border-top: 1px solid #e8ebf0;
+  background: #fbfcfe;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 55px;
+  position: sticky;
+  bottom: 0;
+}
+
+.onord-modal-footer div {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.onord-modal-footer span {
+  color: #8994a7;
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.onord-modal-footer strong {
+  color: #172642;
+  font-size: 20px;
+  font-weight: 800;
+}
+
+.onord-modal-footer div:last-child strong {
+  color: #b43d8c;
+}
+
+/* =========================================================
+   SCROLLBAR
+========================================================= */
+
+.onord-modal::-webkit-scrollbar {
+  width: 8px;
+}
+
+.onord-modal::-webkit-scrollbar-track {
+  background: #f4f5f8;
+}
+
+.onord-modal::-webkit-scrollbar-thumb {
+  background: #cbd0d9;
+  border-radius: 10px;
+}
+
+.onord-table-wrap::-webkit-scrollbar {
+  height: 7px;
+}
+
+.onord-table-wrap::-webkit-scrollbar-thumb {
+  background: #d1d5dd;
+  border-radius: 10px;
+}
+
+/* =========================================================
+   TABLET
+========================================================= */
+
+@media (max-width: 1100px) {
+
+  .onord-page {
+    padding: 25px 20px 45px;
+  }
+
+  .onord-stats {
+    gap: 15px;
+  }
+
+  .onord-order-info {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .address-box {
+    grid-column: span 3;
+  }
+
+}
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 700px) {
+
+  .onord-page {
+    padding: 20px 12px 35px;
+  }
+
+  .onord-header h1 {
+    font-size: 26px;
+  }
+
+  .onord-stats {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .onord-card {
+    min-height: 95px;
+    padding: 18px;
+  }
+
+  .onord-card h2 {
+    font-size: 27px;
+  }
+
+  .onord-tabs {
+    width: 100%;
+    overflow-x: auto;
+  }
+
+  .onord-tabs button {
+    min-width: 170px;
+  }
+
+  .onord-pagination {
+    flex-wrap: wrap;
+  }
+
+  .onord-page-numbers {
+    max-width: 100%;
+    overflow-x: auto;
+  }
+
+  /* Modal */
+
+  .onord-modal-overlay {
+    padding: 8px;
+  }
+
+  .onord-modal {
+    max-height: calc(100vh - 16px);
+    border-radius: 18px;
+  }
+
+  .onord-modal-header {
+    padding: 18px;
+  }
+
+  .onord-modal-header h2 {
+    font-size: 22px;
+  }
+
+  .onord-modal-close {
+    width: 40px;
+    height: 40px;
+    font-size: 24px;
+  }
+
+  .onord-order-info {
+    padding: 15px;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .address-box {
+    grid-column: span 2;
+  }
+
+  .onord-products-container {
+    padding: 18px 15px 8px;
+  }
+
+  .onord-product-card {
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .onord-product-image-wrap {
+    width: 100%;
+    height: 190px;
+  }
+
+  .product-detail-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .onord-product-details h3 {
+    font-size: 18px;
+  }
+
+  .popup-pagination {
+    padding: 12px 15px 18px;
+  }
+
+  .onord-modal-footer {
+    padding: 17px 15px;
+    gap: 20px;
+    justify-content: space-between;
+    flex-wrap: wrap;
+  }
+
+  .onord-modal-footer strong {
+    font-size: 17px;
+  }
+
+}
+
+/* =========================================================
+   SMALL MOBILE
+========================================================= */
+
+@media (max-width: 450px) {
+
+  .onord-order-info {
+    grid-template-columns: 1fr;
+  }
+
+  .address-box {
+    grid-column: span 1;
+  }
+
+  .onord-modal-footer {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .onord-modal-footer div:last-child {
+    grid-column: span 2;
+  }
+
+}
