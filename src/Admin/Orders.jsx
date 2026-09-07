@@ -47,8 +47,15 @@ export default function Orders() {
         const paidData = await paidRes.json();
         const pendingData = await pendingRes.json();
 
-        console.log("Paid Data:", paidData);
-        console.log("Pending Data:", pendingData);
+        // console.log("========================================");
+        // console.log("💰 PAID ORDERS - FULL API RESPONSE");
+        // console.log("========================================");
+        // console.log(paidData);
+
+        // console.log("========================================");
+        // console.log("⏳ PENDING ORDERS - FULL API RESPONSE");
+        // console.log("========================================");
+        // console.log(pendingData);
 
         const paid =
           paidData.orders ||
@@ -290,17 +297,23 @@ export default function Orders() {
   */
 
   const getProductPrice = (item) => {
-    const price = item?.Product_price;
+    const mrp = item?.MRP;
+
+    console.log("========== ORDER PRODUCT PRICE ==========");
+    console.log("Product:", item?.Product_Name);
+    console.log("Model:", item?.Model_number);
+    console.log("MRP:", mrp);
+    console.log("Product_price:", item?.Product_price);
 
     if (
-      price === undefined ||
-      price === null ||
-      price === ""
+      mrp === undefined ||
+      mrp === null ||
+      mrp === ""
     ) {
       return 0;
     }
 
-    return Number(price) || 0;
+    return Number(mrp) || 0;
   };
 
   /*

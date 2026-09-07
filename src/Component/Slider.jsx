@@ -95,7 +95,7 @@ export default function Slider() {
       <div className="slider-marquee">
         <div className="slider-marquee-track">
 <span>
-   Welcome to the Newly Launched Onstage Website | 
+     Welcome to the Newly Launched Onstage Website  | 
   Prices May Vary Slightly During Our Initial Launch Period | 
   After Placing Your Order, Feel Free to Call or Message Us for Quick Confirmation & Assistance | 
   Your Support Helps Us Serve You Better | 
@@ -103,7 +103,7 @@ export default function Slider() {
 </span>
 
 <span>
-   Welcome to the Newly Launched Onstage Website | 
+    Welcome to the Newly Launched Onstage Website  | 
   Prices May Vary Slightly During Our Initial Launch Period | 
   After Placing Your Order, Feel Free to Call or Message Us for Quick Confirmation & Assistance | 
   Your Support Helps Us Serve You Better | 
