@@ -27,7 +27,7 @@ export default function Orders() {
 
         const headers = {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
         };
 
         const [paidRes, pendingRes] = await Promise.all([
@@ -44,51 +44,145 @@ export default function Orders() {
           }),
         ]);
 
+        // HTTP status check
+        console.log("PAID API STATUS:", paidRes.status);
+        console.log("PENDING API STATUS:", pendingRes.status);
+
         const paidData = await paidRes.json();
         const pendingData = await pendingRes.json();
 
-        // console.log("========================================");
-        // console.log("💰 PAID ORDERS - FULL API RESPONSE");
-        // console.log("========================================");
-        // console.log(paidData);
+        console.log("========== PAID API RESPONSE ==========");
+        console.log(paidData);
 
-        // console.log("========================================");
-        // console.log("⏳ PENDING ORDERS - FULL API RESPONSE");
-        // console.log("========================================");
-        // console.log(pendingData);
+        console.log("========== PENDING API RESPONSE ==========");
+        console.log(pendingData);
 
-        const paid =
-          paidData.orders ||
-          paidData.data ||
-          paidData.paidOrders ||
-          paidData.order ||
+        // API response ko array me convert karo
+        const paidRaw =
+          paidData?.orders ||
+          paidData?.data ||
+          paidData?.paidOrders ||
+          paidData?.order ||
           [];
 
-        const pending =
-          pendingData.orders ||
-          pendingData.data ||
-          pendingData.pendingOrders ||
-          pendingData.order ||
-          pendingData.pendingOrder ||
+        const pendingRaw =
+          pendingData?.orders ||
+          pendingData?.data ||
+          pendingData?.pendingOrders ||
+          pendingData?.order ||
+          pendingData?.pendingOrder ||
           [];
 
-        setPaidOrders(
-          [...paid].sort(
-            (a, b) =>
-              new Date(b.createdAt || b.updatedAt || 0) -
-              new Date(a.createdAt || a.updatedAt || 0)
+        const paid = Array.isArray(paidRaw)
+          ? paidRaw
+          : paidRaw
+          ? [paidRaw]
+          : [];
+
+        const pending = Array.isArray(pendingRaw)
+          ? pendingRaw
+          : pendingRaw
+          ? [pendingRaw]
+          : [];
+
+        // Order ko unique ID se identify karo
+        const getId = (order) =>
+          order?.orderId ||
+          order?.razorpayOrderId ||
+          order?._id ||
+          order?.id ||
+          "";
+
+        // Agar pending API me kisi order ka paymentStatus already paid/success
+        // hai, to use Paid tab me rakho.
+        const isPaymentSuccessful = (order) => {
+          const paymentStatus = String(
+            order?.paymentStatus ||
+              order?.payment_status ||
+              order?.paymentState ||
+              ""
           )
+            .trim()
+            .toLowerCase();
+
+          return (
+            paymentStatus === "paid" ||
+            paymentStatus === "success" ||
+            paymentStatus === "successful" ||
+            paymentStatus === "completed" ||
+            Boolean(order?.razorpayPaymentId) ||
+            Boolean(order?.razorpay_payment_id) ||
+            Boolean(order?.payment_id)
+          );
+        };
+
+        // Paid API ke orders
+        const paidMap = new Map();
+
+        paid.forEach((order) => {
+          const id = getId(order);
+
+          if (id) {
+            paidMap.set(id, order);
+          }
+        });
+
+        // Pending API se sirf genuinely pending orders rakho.
+        // Agar backend ne payment success store kiya hai, to Paid me move karo.
+        const finalPending = [];
+
+        pending.forEach((order) => {
+          const id = getId(order);
+
+          if (isPaymentSuccessful(order)) {
+            if (id && !paidMap.has(id)) {
+              paidMap.set(id, order);
+            }
+          } else {
+            finalPending.push(order);
+          }
+        });
+
+        const finalPaid = Array.from(paidMap.values());
+
+        // Latest order first
+        const sortLatest = (a, b) =>
+          new Date(b?.createdAt || b?.updatedAt || 0) -
+          new Date(a?.createdAt || a?.updatedAt || 0);
+
+        finalPaid.sort(sortLatest);
+        finalPending.sort(sortLatest);
+
+        // Debug
+        console.log(
+          "========== FINAL PAID ORDERS ==========",
+          finalPaid.map((o) => ({
+            id: getId(o),
+            status: o?.status,
+            paymentStatus: o?.paymentStatus,
+            payment_id: o?.payment_id,
+            razorpayPaymentId: o?.razorpayPaymentId,
+          }))
         );
 
-        setPendingOrders(
-          [...pending].sort(
-            (a, b) =>
-              new Date(b.createdAt || b.updatedAt || 0) -
-              new Date(a.createdAt || a.updatedAt || 0)
-          )
+        console.log(
+          "========== FINAL PENDING ORDERS ==========",
+          finalPending.map((o) => ({
+            id: getId(o),
+            status: o?.status,
+            paymentStatus: o?.paymentStatus,
+            payment_id: o?.payment_id,
+            razorpayPaymentId: o?.razorpayPaymentId,
+          }))
         );
+
+        setPaidOrders(finalPaid);
+        setPendingOrders(finalPending);
+
       } catch (error) {
         console.error("Orders error:", error);
+        setPaidOrders([]);
+        setPendingOrders([]);
       } finally {
         setLoading(false);
       }
@@ -164,7 +258,9 @@ export default function Orders() {
     ---------------------------------------------------------
   */
 
-  const selectedProducts = selectedOrder?.products || [];
+  const selectedProducts = Array.isArray(selectedOrder?.products)
+    ? selectedOrder.products
+    : [];
   console.log("========== SELECTED ORDER IN ADMIN POPUP ==========");
   console.log("Selected Order:", selectedOrder);
   console.log("Products:", selectedOrder?.products);

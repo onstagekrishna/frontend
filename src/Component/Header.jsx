@@ -1,5 +1,10 @@
+
 import { useEffect, useRef, useState } from "react";
-import { IoMdHeartEmpty, IoMdPersonAdd, IoMdArrowDropdown } from "react-icons/io";
+import {
+  IoMdHeartEmpty,
+  IoMdPersonAdd,
+  IoMdArrowDropdown,
+} from "react-icons/io";
 import { IoCartOutline, IoPersonCircleSharp } from "react-icons/io5";
 import { FaBars, FaTimes, FaCartArrowDown } from "react-icons/fa";
 import { CgProfile } from "react-icons/cg";
@@ -140,10 +145,13 @@ const productBrands = [
     name: "Pluto",
     logo: "https://pub-8fb728ccc32b4c72a6f05fff3cf3d811.r2.dev/3rd%20brand/pluto_logo.png",
   },
+
+  // UPDATED YAMAHA LOGO
   {
     name: "Yamaha",
-    logo: "https://pub-8fb728ccc32b4c72a6f05fff3cf3d811.r2.dev/3rd%20brand/png-clipart-yamaha-logo-yamaha-corporation-yamaha-pro-audio-logo-sound-yamaha-television-text.png",
+    logo: "https://pub-8fb728ccc32b4c72a6f05fff3cf3d811.r2.dev/brand%20logo/images.png",
   },
+
   {
     name: "Tama",
     logo: "https://pub-8fb728ccc32b4c72a6f05fff3cf3d811.r2.dev/3rd%20brand/tama-logo.png",
@@ -155,6 +163,26 @@ const productBrands = [
   {
     name: "Brand Extra",
     logo: "https://pub-8fb728ccc32b4c72a6f05fff3cf3d811.r2.dev/3rd%20brand/images%20(1).png",
+  },
+
+  // NEW BRANDS
+  {
+    name: "Ibanez",
+    logo: "https://pub-8fb728ccc32b4c72a6f05fff3cf3d811.r2.dev/brand%20logo/Ibanez_guitars_logo.webp",
+  },
+  {
+    name: "Mantic",
+    logo: "https://pub-8fb728ccc32b4c72a6f05fff3cf3d811.r2.dev/brand%20logo/mantic_logo_shopify_1.webp",
+  },
+  {
+    name: "Brand Extra 2",
+    logo: "https://pub-8fb728ccc32b4c72a6f05fff3cf3d811.r2.dev/fo2_GslR_400x400.jpg",
+  },
+
+  // NEW MACKIE
+  {
+    name: "Mackie",
+    logo: "https://pub-8fb728ccc32b4c72a6f05fff3cf3d811.r2.dev/Mackie-Brand.png",
   },
 ];
 
@@ -201,29 +229,25 @@ const categories = [
   },
 ];
 
-
-
 function Header() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const dropdownRef = useRef(null);
-  const [searchOpen, setSearchOpen] = useState(false);
 
-  // helpers: 
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [mobileProductOpen, setMobileProductOpen] = useState(false);
+  const [current, setCurrent] = useState(0);
+
   const closeMobileAndNavigate = (path) => {
     setMenuOpen(false);
     setMobileProductOpen(false);
     navigate(path);
   };
 
-  const [menuOpen, setMenuOpen] = useState(false);
-  const [dropdownOpen, setDropdownOpen] = useState(false);
-  const [mobileProductOpen, setMobileProductOpen] = useState(false);
-  const [current, setCurrent] = useState(0);
-
   useEffect(() => {
     const handleResize = () => {
-      // Desktop par aate hi mobile menu aur submenu band
       if (window.innerWidth > 768) {
         setMenuOpen(false);
         setMobileProductOpen(false);
@@ -240,20 +264,27 @@ function Header() {
 
   const userData = useSelector((state) => state.auth.user);
   const cartItems = useSelector((state) => state.Cart?.items || []);
-  const wishlistItems = useSelector((state) => state.Wishlist?.items || []);
+  const wishlistItems = useSelector(
+    (state) => state.Wishlist?.items || []
+  );
 
   const isAdmin = userData?.role?.toLowerCase() === "admin";
   const isUser = userData?.role?.toLowerCase() === "user";
 
   useEffect(() => {
     const handleClickOutside = (e) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(e.target)
+      ) {
         setDropdownOpen(false);
       }
     };
 
     document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
+
+    return () =>
+      document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
   const topbarContent = (
@@ -265,20 +296,28 @@ function Header() {
       <div className="right">
         <span>
           <IoMailOutline />
-          <a href="mailto:onstagesupport@gmail.com">info.onstageindia@gmail.com</a>
+          <a href="mailto:onstagesupport@gmail.com">
+            info.onstageindia@gmail.com
+          </a>
         </span>
 
         <span>
           <IoCallOutline />
-          <a href="tel:+918447752663">+91 8447752663 </a>
+          <a href="tel:+918447752663">+91 8447752663</a>
         </span>
       </div>
     </div>
   );
 
   const messages = [
-    { class: "orange-bar", content: topbarContent },
-    { class: "purple-bar", content: topbarContent },
+    {
+      class: "orange-bar",
+      content: topbarContent,
+    },
+    {
+      class: "purple-bar",
+      content: topbarContent,
+    },
   ];
 
   useEffect(() => {
@@ -292,42 +331,22 @@ function Header() {
   const handleBrandClick = (brandName) => {
     setMenuOpen(false);
     setMobileProductOpen(false);
+
     document.activeElement?.blur();
 
-    navigate(`/category?brand=${encodeURIComponent(brandName)}&page=1`);
+    navigate(
+      `/category?brand=${encodeURIComponent(brandName)}&page=1`
+    );
   };
+
   const handleCategoryClick = (category) => {
     setMenuOpen(false);
     setMobileProductOpen(false);
 
-    navigate(`/category?type=${encodeURIComponent(category)}&page=1`);
+    navigate(
+      `/category?type=${encodeURIComponent(category)}&page=1`
+    );
   };
-  // const handleLogout = async () => {
-  //   try {
-  //     await fetch("https://api.onstage.co.in/api/v1/logout", {
-  //       method: "POST",
-  //       credentials: "include",
-  //     });
-  //   } catch (err) {
-  //     console.error("Logout API Error:", err);
-  //   }
-
-  //   dispatch(logoutUser());
-
-  //   // Clear complete localStorage
-  //   localStorage.clear();
-
-  //   // Clear complete sessionStorage
-  //   sessionStorage.clear();
-
-  //   setDropdownOpen(false);
-  //   setMenuOpen(false);
-
-  //   navigate("/login", { replace: true });
-
-  //   // Refresh app state
-  //   window.location.reload();
-  // };
 
   const handleLogout = async () => {
     try {
@@ -341,12 +360,10 @@ function Header() {
 
     dispatch(logoutUser());
 
-    // Remove only required localStorage items
     localStorage.removeItem("token");
     localStorage.removeItem("user");
     localStorage.removeItem("rzp_stored_checkout_id");
 
-    // Clear sessionStorage if needed
     sessionStorage.clear();
 
     setDropdownOpen(false);
@@ -359,27 +376,40 @@ function Header() {
 
   return (
     <>
+      {/* TOP BAR */}
       <div className={`topbar ${messages[current].class}`}>
         {messages[current].content}
       </div>
 
+      {/* NAVBAR */}
       <header className="navbar">
         <div className="nav-wrapper">
-          <div className="nav-left desktop-only">
-            <span onClick={() => navigate("/")}>Home</span>
-            <span onClick={() => navigate("/AboutUs")}>About Us</span>
 
+          {/* DESKTOP LEFT */}
+          <div className="nav-left desktop-only">
+
+            <span onClick={() => navigate("/")}>
+              Home
+            </span>
+
+            <span onClick={() => navigate("/AboutUs")}>
+              About Us
+            </span>
+
+            {/* OUR BRANDS */}
             <div className="os-products-menu">
+
               <span className="os-products-trigger">
                 Our Brands <IoMdArrowDropdown />
               </span>
 
               <div className="os-products-mega">
-                {productBrands.map((brand) => (
+
+                {productBrands.map((brand, index) => (
                   <button
                     type="button"
                     className="navbar-brand-logo-btn"
-                    key={brand.name}
+                    key={`${brand.name}-${index}`}
                     onClick={() => handleBrandClick(brand.name)}
                     title={brand.name}
                   >
@@ -387,44 +417,65 @@ function Header() {
                       src={brand.logo}
                       alt={brand.name}
                       className="navbar-brand-logo"
+                      loading="lazy"
                     />
                   </button>
                 ))}
+
               </div>
             </div>
           </div>
 
-          <div className="nav-center" onClick={() => navigate("/")}>
+          {/* CENTER LOGO */}
+          <div
+            className="nav-center"
+            onClick={() => navigate("/")}
+          >
             <img src={logo1} alt="logo" />
           </div>
 
+          {/* DESKTOP RIGHT */}
           <div className="nav-right desktop-only">
+
             <div className="search-box">
               <SearchBar />
             </div>
 
             {!isAdmin && (
               <>
-                <div className="mobile-icon" onClick={() => navigate("/wishlist")}>
+                {/* WISHLIST */}
+                <div
+                  className="mobile-icon"
+                  onClick={() => navigate("/wishlist")}
+                >
                   <IoMdHeartEmpty />
+
                   {wishlistItems.length > 0 && (
-                    <span className="badge">{wishlistItems.length}</span>
+                    <span className="badge">
+                      {wishlistItems.length}
+                    </span>
                   )}
                 </div>
 
+                {/* CART */}
                 <div
                   className="mobile-icon"
                   onClick={() => navigate("/cart")}
                 >
                   <IoCartOutline />
+
                   {cartItems.length > 0 && (
-                    <span className="badge">{cartItems.length}</span>
+                    <span className="badge">
+                      {cartItems.length}
+                    </span>
                   )}
                 </div>
               </>
             )}
 
+            {/* USER */}
             <div className="user-menu" ref={dropdownRef}>
+
               <div
                 className="user-box"
                 onClick={() => {
@@ -438,6 +489,7 @@ function Header() {
                 {userData ? (
                   <>
                     <IoPersonCircleSharp />
+
                     <span>
                       {userData.firstName?.split(" ")[0]}
                     </span>
@@ -452,6 +504,7 @@ function Header() {
 
               {userData && dropdownOpen && (
                 <div className="dropdown show">
+
                   {isUser && (
                     <>
                       <div onClick={() => navigate("/profile")}>
@@ -462,7 +515,10 @@ function Header() {
                         <FaCartArrowDown /> My Orders
                       </div>
 
-                      <div onClick={handleLogout} className="logout">
+                      <div
+                        onClick={handleLogout}
+                        className="logout"
+                      >
                         <IoIosLogOut /> Logout
                       </div>
                     </>
@@ -470,19 +526,29 @@ function Header() {
 
                   {isAdmin && (
                     <>
-                      <div onClick={() => navigate("/admin/dashboard")}>
+                      <div
+                        onClick={() =>
+                          navigate("/admin/dashboard")
+                        }
+                      >
                         <MdDashboard /> Dashboard
                       </div>
 
-                      <div onClick={handleLogout} className="logout">
+                      <div
+                        onClick={handleLogout}
+                        className="logout"
+                      >
                         <IoIosLogOut /> Logout
                       </div>
                     </>
                   )}
+
                 </div>
               )}
             </div>
           </div>
+
+          {/* MOBILE HEADER */}
           <div className="mobile-header mobile-only">
 
             <div
@@ -496,11 +562,13 @@ function Header() {
 
               {!isAdmin && (
                 <>
+                  {/* MOBILE WISHLIST */}
                   <div
                     className="mobile-icon"
                     onClick={() => navigate("/wishlist")}
                   >
                     <IoMdHeartEmpty />
+
                     {wishlistItems.length > 0 && (
                       <span className="badge">
                         {wishlistItems.length}
@@ -508,11 +576,13 @@ function Header() {
                     )}
                   </div>
 
+                  {/* MOBILE CART */}
                   <div
                     className="mobile-icon"
                     onClick={() => navigate("/cart")}
                   >
                     <IoCartOutline />
+
                     {cartItems.length > 0 && (
                       <span className="badge">
                         {cartItems.length}
@@ -522,8 +592,7 @@ function Header() {
                 </>
               )}
 
-
-
+              {/* MOBILE MENU */}
               <div
                 className="mobile-icon"
                 onClick={() => setMenuOpen(true)}
@@ -532,17 +601,21 @@ function Header() {
               </div>
 
             </div>
-
           </div>
+
         </div>
       </header>
 
+      {/* MOBILE MENU */}
       <div className={`mobile-menu ${menuOpen ? "active" : ""}`}>
+
         <div className="mobile-close">
           <FaTimes onClick={() => setMenuOpen(false)} />
         </div>
 
         <ul>
+
+          {/* SEARCH */}
           <li
             onClick={() => {
               setSearchOpen(true);
@@ -550,18 +623,40 @@ function Header() {
             }}
           >
             <IoSearchOutline
-              style={{ marginRight: "8px", verticalAlign: "middle" }}
+              style={{
+                marginRight: "8px",
+                verticalAlign: "middle",
+              }}
             />
             Search
           </li>
-          <li onClick={() => closeMobileAndNavigate("/")}>Home</li>
-          <li onClick={() => closeMobileAndNavigate("/AboutUs")}>About Us</li>
 
+          {/* HOME */}
+          <li
+            onClick={() =>
+              closeMobileAndNavigate("/")
+            }
+          >
+            Home
+          </li>
+
+          {/* ABOUT */}
+          <li
+            onClick={() =>
+              closeMobileAndNavigate("/AboutUs")
+            }
+          >
+            About Us
+          </li>
+
+          {/* CATEGORY */}
           <li
             className="mobile-products-title"
-            onClick={() => setMobileProductOpen(!mobileProductOpen)}
+            onClick={() =>
+              setMobileProductOpen(!mobileProductOpen)
+            }
           >
-            Our Category<IoMdArrowDropdown />
+            Our Category <IoMdArrowDropdown />
           </li>
 
           {mobileProductOpen && (
@@ -572,7 +667,9 @@ function Header() {
                   type="button"
                   className="mobile-category-card"
                   key={index}
-                  onClick={() => handleCategoryClick(category.name)}
+                  onClick={() =>
+                    handleCategoryClick(category.name)
+                  }
                 >
 
                   <img
@@ -593,38 +690,63 @@ function Header() {
             </div>
           )}
 
-          {/* {!isAdmin && (
-            <>
-              <li onClick={() => closeMobileAndNavigate("/wishlist")}>Wishlist</li>
-              <li onClick={() => closeMobileAndNavigate("/cart")}>Cart</li>
-            </>
-          )} */}
-
+          {/* USER MENU */}
           {userData ? (
             <>
               {isUser && (
                 <>
-                  <li onClick={() => closeMobileAndNavigate("/profile")}>My Profile</li>
-                  <li onClick={() => closeMobileAndNavigate("/orders")}>My Orders</li>
+                  <li
+                    onClick={() =>
+                      closeMobileAndNavigate("/profile")
+                    }
+                  >
+                    My Profile
+                  </li>
+
+                  <li
+                    onClick={() =>
+                      closeMobileAndNavigate("/orders")
+                    }
+                  >
+                    My Orders
+                  </li>
                 </>
               )}
 
               {isAdmin && (
-                <li onClick={() => closeMobileAndNavigate("/admin/dashboard")}>
+                <li
+                  onClick={() =>
+                    closeMobileAndNavigate(
+                      "/admin/dashboard"
+                    )
+                  }
+                >
                   Dashboard
                 </li>
               )}
 
-              <li onClick={handleLogout} className="logout-menu-item">
+              <li
+                onClick={handleLogout}
+                className="logout-menu-item"
+              >
                 <IoIosLogOut className="logout-icon" />
                 <span>Logout</span>
               </li>
             </>
           ) : (
-            <li onClick={() => closeMobileAndNavigate("/login")}>Login</li>
+            <li
+              onClick={() =>
+                closeMobileAndNavigate("/login")
+              }
+            >
+              Login
+            </li>
           )}
+
         </ul>
       </div>
+
+      {/* SEARCH MODAL */}
       {searchOpen && (
         <div
           className="search-modal-overlay"
@@ -634,16 +756,23 @@ function Header() {
             className="search-modal"
             onClick={(e) => e.stopPropagation()}
           >
+
             <div className="search-modal-header">
               <span>Search Products</span>
 
               <FaTimes
                 className="close-icon"
-                onClick={() => setSearchOpen(false)}
+                onClick={() =>
+                  setSearchOpen(false)
+                }
               />
             </div>
 
-            <SearchBar onSelect={() => setSearchOpen(false)} />
+            <SearchBar
+              onSelect={() =>
+                setSearchOpen(false)
+              }
+            />
 
           </div>
         </div>

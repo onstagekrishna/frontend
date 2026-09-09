@@ -122,7 +122,6 @@ const brandCards = [
     logo: "https://pub-545cabf104d34f849ccb8626338c8a89.r2.dev/akai-professional-vector-logo.png",
     desc: "Music Production Brand",
   },
-
   {
     name: "Dean Markley",
     logo: "https://pub-8fb728ccc32b4c72a6f05fff3cf3d811.r2.dev/3rd%20brand/356-3566818_dean-markley-logo-png-transparent-dean-markley-logo.png",
@@ -179,21 +178,49 @@ const brandCards = [
     desc: "Music Brand",
   },
 
+  // =========================
+  // NEW UNIQUE BRANDS
+  // =========================
+
+  {
+    name: "Ibanez",
+    logo: "https://pub-8fb728ccc32b4c72a6f05fff3cf3d811.r2.dev/brand%20logo/Ibanez_guitars_logo.webp",
+    desc: "Guitar Brand",
+  },
+  {
+    name: "Mantic",
+    logo: "https://pub-8fb728ccc32b4c72a6f05fff3cf3d811.r2.dev/brand%20logo/mantic_logo_shopify_1.webp",
+    desc: "Guitar Brand",
+  },
+  {
+    name: "Brand Extra 2",
+    logo: "https://pub-8fb728ccc32b4c72a6f05fff3cf3d811.r2.dev/fo2_GslR_400x400.jpg",
+    desc: "Music Brand",
+  },
+  {
+    name: "Mackie",
+    logo: "https://pub-8fb728ccc32b4c72a6f05fff3cf3d811.r2.dev/Mackie-Brand.png",
+    desc: "Professional Audio Brand",
+  },
 ];
 
 function BrandLogo() {
   const navigate = useNavigate();
 
   const handleBrandClick = (brandName) => {
-    navigate(`/category?brand=${encodeURIComponent(brandName)}&page=1`);
+    navigate(
+      `/category?brand=${encodeURIComponent(brandName)}&page=1`
+    );
   };
 
   return (
     <section className="os-brand-section">
       <div className="container">
         <div className="os-brand-container">
+
           <div className="brand-heading-wrapper">
             <h2 className="brand-heading">OUR BRANDS</h2>
+
             <p className="brand-tagline">
               Discover trusted brands known for quality, innovation, and performance.
             </p>
@@ -203,23 +230,31 @@ function BrandLogo() {
             {brandCards.map((brand, index) => (
               <div
                 className="os-brand-card"
-                key={index}
+                key={`${brand.name}-${index}`}
                 onClick={() => handleBrandClick(brand.name)}
                 role="button"
                 tabIndex={0}
                 onKeyDown={(e) => {
-                  if (e.key === "Enter") handleBrandClick(brand.name);
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    handleBrandClick(brand.name);
+                  }
                 }}
                 style={{ cursor: "pointer" }}
               >
                 <div className="os-brand-logo">
-                  <img src={brand.logo} alt={brand.name} />
+                  <img
+                    src={brand.logo}
+                    alt={`${brand.name} logo`}
+                    loading="lazy"
+                  />
                 </div>
 
                 <span className="os-brand-small-line"></span>
               </div>
             ))}
           </div>
+
         </div>
       </div>
     </section>
@@ -227,3 +262,5 @@ function BrandLogo() {
 }
 
 export default BrandLogo;
+
+
