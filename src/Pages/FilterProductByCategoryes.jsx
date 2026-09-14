@@ -1,428 +1,1318 @@
 import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { slugify } from "../utils/slugify";
+
 import { FiFilter } from "react-icons/fi";
 import { IoClose } from "react-icons/io5";
-import { useDispatch, useSelector } from "react-redux";
-import { addToWishlist, removeFromWishlist } from "../Redux/Slices/WishlistSlice";
-import { IoIosHeart, IoIosHeartEmpty } from "react-icons/io";
 import { IoChevronDown, IoChevronForward } from "react-icons/io5";
 import { FaStar } from "react-icons/fa";
+import { IoIosHeart, IoIosHeartEmpty } from "react-icons/io";
+
+import { useDispatch, useSelector } from "react-redux";
+import {
+  addToWishlist,
+  removeFromWishlist,
+} from "../Redux/Slices/WishlistSlice";
+
+
 
 export default function FilterProductByCategoryes() {
-
   const navigate = useNavigate();
   const location = useLocation();
+  const dispatch = useDispatch();
+
+  /* =========================================================
+     REDUX
+  ========================================================= */
+
+  const wishlistItems = useSelector(
+    (state) => state.Wishlist?.items || []
+  );
+
+  /* =========================================================
+     STATES
+  ========================================================= */
 
   const [products, setProducts] = useState([]);
 
   const [loading, setLoading] = useState(true);
+
   const [isOpen, setIsOpen] = useState(false);
 
   const [allBrands, setAllBrands] = useState({});
+
   const [allCategories, setAllCategories] = useState({});
 
   const [currentPage, setCurrentPage] = useState(1);
+
   const [totalPages, setTotalPages] = useState(1);
+
   const [sortType, setSortType] = useState("");
+
   const [openCategory, setOpenCategory] = useState(null);
 
-  const queryParams = new URLSearchParams(location.search);
-  const typeParam = queryParams.get("type");
-  const activeSub = queryParams.get("subCategory");
+  /* =========================================================
+     URL PARAMETERS
 
-  const dispatch = useDispatch();
-  const wishlistItems = useSelector((state) => state.Wishlist?.items || []);
+     IMPORTANT:
+     location.search changes whenever Header category is clicked.
+     This makes the page react WITHOUT browser refresh.
+  ========================================================= */
+
+  const queryParams = new URLSearchParams(location.search);
+
+  const typeParam = queryParams.get("type") || "";
+
+  const brandParam = queryParams.get("brand") || "";
+
+  const activeSub = queryParams.get("subCategory") || "";
+
+  const pageParam = Number(queryParams.get("page")) || 1;
+
+  const sortParam = queryParams.get("sort") || "";
+
+  /* =========================================================
+     BODY SCROLL LOCK FOR MOBILE FILTER
+  ========================================================= */
 
   useEffect(() => {
-    document.body.style.overflow = isOpen ? "hidden" : "auto";
+    if (isOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+
+    return () => {
+      document.body.style.overflow = "";
+    };
   }, [isOpen]);
 
+  /* =========================================================
+     SYNC SORT WITH URL
+  ========================================================= */
+
   useEffect(() => {
-    async function fetchProducts() {
+    if (sortParam === "asc") {
+      setSortType("low");
+    } else if (sortParam === "desc") {
+      setSortType("high");
+    } else {
+      setSortType("");
+    }
+  }, [sortParam]);
+
+  /* =========================================================
+     IMPORTANT:
+     WHEN CATEGORY / BRAND / SUBCATEGORY CHANGES
+
+     Reset mobile filter UI and opened category.
+
+     This runs without page refresh.
+  ========================================================= */
+
+  useEffect(() => {
+    setIsOpen(false);
+    setOpenCategory(null);
+  }, [typeParam, brandParam, activeSub]);
+
+  /* =========================================================
+     FETCH PRODUCTS
+
+     location.search is the MAIN dependency.
+
+     Header:
+     /category?type=Guitars&page=1
+
+     Then:
+
+     /category?type=Drums%20%26%20Drum%20Accessories&page=1
+
+     React detects location.search change and fetches again.
+  ========================================================= */
+
+  useEffect(() => {
+    let cancelled = false;
+
+    const fetchProducts = async () => {
       try {
         setLoading(true);
 
         const params = new URLSearchParams(location.search);
 
-        if (!params.get("page")) {
-          params.set("page", 1);
-          navigate(`${location.pathname}?${params.toString()}`, {
-            replace: true,
-          });
-          return;
+        /* =====================================================
+           ALWAYS KEEP PAGE
+        ===================================================== */
+
+        let page = Number(params.get("page")) || 1;
+
+        if (page < 1) {
+          page = 1;
         }
-        const page = Number(params.get("page")) || 1;
+
         params.set("page", page);
 
-        const res = await fetch(
-          `https://api.onstage.co.in/api/v1/categoryProduct?${params.toString()}`
+        /* =====================================================
+           API CALL
+        ===================================================== */
+
+        const url =
+          `https://api.onstage.co.in/api/v1/categoryProduct?` +
+          params.toString();
+
+        console.log(
+          "CATEGORY API REQUEST:",
+          url
         );
+
+        const res = await fetch(url);
+
+        if (!res.ok) {
+          throw new Error(
+            `API Error: ${res.status}`
+          );
+        }
 
         const data = await res.json();
 
-        setProducts(data.products);
+        console.log(
+          "CATEGORY API RESPONSE:",
+          data
+        );
 
-        // Sirf pehli baar saare brands save karo
-        if (Object.keys(allBrands).length === 0) {
-          setAllBrands(data.brandCount || {});
+        /* =====================================================
+           IGNORE OLD API RESPONSE
+
+           Agar user quickly:
+
+           Guitars -> Drums -> Amplifiers
+
+           click kare, purani API response latest products
+           ko overwrite nahi karegi.
+        ===================================================== */
+
+        if (cancelled) {
+          return;
         }
 
-        if (Object.keys(allCategories).length === 0) {
-          setAllCategories(data.categoryWithSubCategories || {});
+        /* =====================================================
+           PRODUCTS
+        ===================================================== */
+
+        const fetchedProducts =
+          Array.isArray(data?.products)
+            ? data.products
+            : [];
+
+        setProducts(fetchedProducts);
+
+        /* =====================================================
+           BRANDS
+
+           API se latest available filter data rakho.
+           Pehle wala data permanently lock nahi hoga.
+        ===================================================== */
+
+        if (
+          data?.brandCount &&
+          typeof data.brandCount === "object"
+        ) {
+          setAllBrands(data.brandCount);
         }
 
-        setTotalPages(Number(data.totalPages) || 1);
+        /* =====================================================
+           CATEGORIES
+        ===================================================== */
+
+        if (
+          data?.categoryWithSubCategories &&
+          typeof data.categoryWithSubCategories ===
+            "object"
+        ) {
+          setAllCategories(
+            data.categoryWithSubCategories
+          );
+        }
+
+        /* =====================================================
+           PAGINATION
+        ===================================================== */
+
+        setTotalPages(
+          Math.max(
+            1,
+            Number(data?.totalPages) || 1
+          )
+        );
+
         setCurrentPage(page);
 
-      } catch (err) {
-        console.log(err);
+      } catch (error) {
+        if (cancelled) {
+          return;
+        }
+
+        console.error(
+          "Category Products Error:",
+          error
+        );
+
         setProducts([]);
+
+        setTotalPages(1);
+
+        setCurrentPage(1);
       } finally {
-        setLoading(false);
+        if (!cancelled) {
+          setLoading(false);
+        }
       }
-    }
+    };
 
     fetchProducts();
-  }, [location.search, location.pathname]);
 
+    return () => {
+      cancelled = true;
+    };
 
+  }, [
+    location.search,
+    location.pathname,
+  ]);
 
-  function applyFilter(type, value) {
-    const params = new URLSearchParams(location.search);
-    params.set("page", 1);
+  /* =========================================================
+     APPLY FILTER
+  ========================================================= */
 
-    if (type === "brand") {
+  const applyFilter = (filterType, value) => {
+    const params = new URLSearchParams(
+      location.search
+    );
+
+    /* =====================================================
+       PAGE ALWAYS 1 AFTER FILTER
+    ===================================================== */
+
+    params.set("page", "1");
+
+    /* =====================================================
+       BRAND FILTER
+    ===================================================== */
+
+    if (filterType === "brand") {
       params.set("brand", value);
+
       params.delete("subCategory");
+
+      console.log(
+        "Brand Filter:",
+        value
+      );
     }
 
-    if (type === "subCategory") {
-      params.set("subCategory", value);
+    /* =====================================================
+       SUBCATEGORY FILTER
+    ===================================================== */
+
+    if (filterType === "subCategory") {
+      params.set(
+        "subCategory",
+        value
+      );
+
       params.delete("brand");
+
+      console.log(
+        "Subcategory Filter:",
+        value
+      );
     }
 
-    navigate(`${location.pathname}?${params.toString()}`);
-    setIsOpen(false);
-  }
+    /* =====================================================
+       NAVIGATE
 
-  function handleSort(e) {
+       This changes location.search.
+
+       Fetch useEffect automatically runs.
+    ===================================================== */
+
+    navigate(
+      `${location.pathname}?${params.toString()}`
+    );
+
+    /* =====================================================
+       CLOSE MOBILE FILTER
+    ===================================================== */
+
+    setIsOpen(false);
+  };
+
+  /* =========================================================
+     SORT
+  ========================================================= */
+
+  const handleSort = (e) => {
     const value = e.target.value;
+
     setSortType(value);
 
-    const params = new URLSearchParams(location.search);
+    const params = new URLSearchParams(
+      location.search
+    );
+
+    /* =====================================================
+       REMOVE SORT
+    ===================================================== */
 
     if (value === "") {
       params.delete("sort");
-    } else {
-      params.set("sort", value === "low" ? "asc" : "desc");
     }
 
-    params.set("page", 1);
-    navigate(`${location.pathname}?${params.toString()}`);
-  }
+    /* =====================================================
+       LOW -> HIGH
+    ===================================================== */
 
-  function changePage(page) {
-    if (page < 1 || page > totalPages) return;
+    else if (value === "low") {
+      params.set("sort", "asc");
+    }
 
-    const params = new URLSearchParams(location.search);
-    params.set("page", page);
+    /* =====================================================
+       HIGH -> LOW
+    ===================================================== */
 
-    navigate(`${location.pathname}?${params.toString()}`);
+    else if (value === "high") {
+      params.set("sort", "desc");
+    }
 
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  }
+    /* =====================================================
+       SORT ALWAYS STARTS PAGE 1
+    ===================================================== */
 
-  const getPagination = (currentPage, totalPages) => {
+    params.set("page", "1");
+
+    navigate(
+      `${location.pathname}?${params.toString()}`
+    );
+  };
+
+  /* =========================================================
+     PAGINATION
+  ========================================================= */
+
+  const changePage = (page) => {
+    if (
+      page < 1 ||
+      page > totalPages ||
+      page === currentPage
+    ) {
+      return;
+    }
+
+    const params = new URLSearchParams(
+      location.search
+    );
+
+    params.set(
+      "page",
+      String(page)
+    );
+
+    navigate(
+      `${location.pathname}?${params.toString()}`
+    );
+
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  };
+
+  /* =========================================================
+     PAGINATION HELPER
+  ========================================================= */
+
+  const getPagination = (
+    current,
+    total
+  ) => {
     const delta = 2;
-    const range = [];
-    const rangeWithDots = [];
-    let l;
 
-    for (let i = 1; i <= totalPages; i++) {
+    const range = [];
+
+    const rangeWithDots = [];
+
+    let previous;
+
+    for (
+      let i = 1;
+      i <= total;
+      i++
+    ) {
       if (
         i === 1 ||
-        i === totalPages ||
-        (i >= currentPage - delta && i <= currentPage + delta)
+        i === total ||
+        (
+          i >= current - delta &&
+          i <= current + delta
+        )
       ) {
         range.push(i);
       }
     }
 
-    for (let i of range) {
-      if (l) {
-        if (i - l === 2) {
-          rangeWithDots.push(l + 1);
-        } else if (i - l > 2) {
-          rangeWithDots.push("...");
+    for (const i of range) {
+      if (previous) {
+        if (i - previous === 2) {
+          rangeWithDots.push(
+            previous + 1
+          );
+        } else if (
+          i - previous > 2
+        ) {
+          rangeWithDots.push(
+            "..."
+          );
         }
       }
+
       rangeWithDots.push(i);
-      l = i;
+
+      previous = i;
     }
 
     return rangeWithDots;
   };
 
-  const handleProductClick = (product) => {
-    console.log("FULL PRODUCT:", product);
-    const identifier = slugify(product.Product_Name) || product.product_id;
-    navigate(`/productDetails/${identifier}`, { state: product });
+  /* =========================================================
+     PRODUCT CLICK
+  ========================================================= */
+
+  const handleProductClick = (
+    product
+  ) => {
+    if (!product) return;
+
+    const identifier =
+      slugify(
+        product.Product_Name
+      ) ||
+      product.product_id;
+
+    if (!identifier) return;
+
+    navigate(
+      `/productDetails/${identifier}`,
+      {
+        state: product,
+      }
+    );
   };
+
+  /* =========================================================
+     WISHLIST CHECK
+  ========================================================= */
+
+  const isProductWishlisted = (
+    productId
+  ) => {
+    return wishlistItems.some(
+      (item) =>
+        String(
+          item?.product_id ||
+          item?._id ||
+          item?.id
+        ) ===
+        String(productId)
+    );
+  };
+
+  /* =========================================================
+     WISHLIST
+  ========================================================= */
+
+  const handleWishlist = (
+    e,
+    item
+  ) => {
+    e.stopPropagation();
+
+    const productId =
+      item?.product_id ||
+      item?._id ||
+      item?.id;
+
+    if (!productId) {
+      return;
+    }
+
+    const isWishlisted =
+      isProductWishlisted(
+        productId
+      );
+
+    if (isWishlisted) {
+      dispatch(
+        removeFromWishlist(
+          productId
+        )
+      );
+
+      if (
+        typeof window.showNotification ===
+        "function"
+      ) {
+        window.showNotification(
+          "Removed from Wishlist",
+          "info"
+        );
+      }
+
+    } else {
+      dispatch(
+        addToWishlist({
+          ...item,
+          product_id: productId,
+        })
+      );
+
+      if (
+        typeof window.showNotification ===
+        "function"
+      ) {
+        window.showNotification(
+          "Added to Wishlist",
+          "success"
+        );
+      }
+    }
+  };
+
+  /* =========================================================
+     PAGINATION BUTTONS
+  ========================================================= */
+
+  const paginationItems =
+    getPagination(
+      currentPage,
+      totalPages
+    );
+
+  /* =========================================================
+     RENDER
+  ========================================================= */
 
   return (
     <section className="ecom-products-section">
+
       <div className="container">
+
+        {/* ===================================================
+            BREADCRUMB
+        =================================================== */}
+
         <div className="ecom-breadcrumb">
-          <span onClick={() => navigate("/")}>Home</span> /{" "}
+
           <span
-            className="active-breadcrumb"
-            onClick={() => {
-              const params = new URLSearchParams();
-              params.set("type", typeParam || "");
-              params.set("page", 1);
-              navigate(`/category?${params.toString()}`);
-            }}
+            onClick={() =>
+              navigate("/")
+            }
           >
-            {typeParam}
+            Home
           </span>
+
+          {" / "}
+
+          <span className="active-breadcrumb">
+            {typeParam ||
+              brandParam ||
+              activeSub ||
+              "Products"}
+          </span>
+
         </div>
 
-        <h2 className="ecom-products-heading">{typeParam}</h2>
+        {/* ===================================================
+            HEADING
+        =================================================== */}
+
+        <h2 className="ecom-products-heading">
+          {typeParam ||
+            brandParam ||
+            activeSub ||
+            "Products"}
+        </h2>
+
+        {/* ===================================================
+            FILTER + SORT
+        =================================================== */}
 
         <div className="ecom-filter-row">
-          <button className="fpc-filter-btn" onClick={() => setIsOpen(true)}>
-            <FiFilter size={18} /> Filter
+
+          <button
+            type="button"
+            className="fpc-filter-btn"
+            onClick={() =>
+              setIsOpen(true)
+            }
+          >
+            <FiFilter size={18} />
+
+            <span>
+              Filter
+            </span>
           </button>
 
-          <select className="fpc-sort" value={sortType} onChange={handleSort}>
-            <option value="">Sort By</option>
-            <option value="low">Price: Low → High</option>
-            <option value="high">Price: High → Low</option>
+          <select
+            className="fpc-sort"
+            value={sortType}
+            onChange={handleSort}
+          >
+            <option value="">
+              Sort By
+            </option>
+
+            <option value="low">
+              Price: Low → High
+            </option>
+
+            <option value="high">
+              Price: High → Low
+            </option>
           </select>
+
         </div>
+
+        {/* ===================================================
+            MOBILE FILTER OVERLAY
+        =================================================== */}
 
         <div
-          className={`fpc-overlay ${isOpen ? "active" : ""}`}
-          onClick={() => setIsOpen(false)}
+          className={`fpc-overlay ${
+            isOpen
+              ? "active"
+              : ""
+          }`}
+          onClick={() =>
+            setIsOpen(false)
+          }
         >
+
           <div
-            className={`fpc-sidebar ${isOpen ? "open" : ""}`}
-            onClick={(e) => e.stopPropagation()}
+            className={`fpc-sidebar ${
+              isOpen
+                ? "open"
+                : ""
+            }`}
+            onClick={(e) =>
+              e.stopPropagation()
+            }
           >
+
+            {/* ===============================================
+                FILTER HEADER
+            =============================================== */}
+
             <div className="fpc-sidebar-header">
-              <h3>Filter</h3>
-              <IoClose size={22} onClick={() => setIsOpen(false)} />
+
+              <h3>
+                Filter
+              </h3>
+
+              <button
+                type="button"
+                className="fpc-close-btn"
+                onClick={() =>
+                  setIsOpen(false)
+                }
+              >
+                <IoClose
+                  size={22}
+                />
+              </button>
+
             </div>
 
-            <h3 className="product-cat-heading">PRODUCT CATEGORIES</h3>
+            {/* ===============================================
+                PRODUCT CATEGORIES
+            =============================================== */}
 
-            {Object.entries(allCategories).map(([category, subs]) => {
-              const isActive = typeParam === category;
+            <h3 className="product-cat-heading">
+              PRODUCT CATEGORIES
+            </h3>
 
-              return (
-                <div key={category} className="category-block">
-                  <div
-                    className={`category-title ${isActive ? "active-cat" : ""}`}
+            <div className="fpc-category-list">
+
+              {Object.entries(
+                allCategories
+              ).map(
+                ([
+                  category,
+                  subs,
+                ]) => {
+
+                  const isActive =
+                    typeParam ===
+                    category;
+
+                  const isCategoryOpen =
+                    openCategory ===
+                    category;
+
+                  const subcategories =
+                    Array.isArray(
+                      subs
+                    )
+                      ? subs
+                      : [];
+
+                  return (
+                    <div
+                      key={category}
+                      className="category-block"
+                    >
+
+                      {/* CATEGORY TITLE */}
+
+                      <div
+                        className={`category-title ${
+                          isActive
+                            ? "active-cat"
+                            : ""
+                        }`}
+                        onClick={() =>
+                          setOpenCategory(
+                            isCategoryOpen
+                              ? null
+                              : category
+                          )
+                        }
+                      >
+
+                        <span>
+                          {category}
+                        </span>
+
+                        {isCategoryOpen ? (
+                          <IoChevronDown className="category-arrow" />
+                        ) : (
+                          <IoChevronForward className="category-arrow" />
+                        )}
+
+                      </div>
+
+                      {/* SUBCATEGORIES */}
+
+                      {isCategoryOpen && (
+                        <div className="subcategory-list">
+
+                          {subcategories.map(
+                            (
+                              sub,
+                              index
+                            ) => (
+
+                              <p
+                                key={`${sub}-${index}`}
+                                className={`subcategory-item ${
+                                  activeSub ===
+                                  sub
+                                    ? "active-sub"
+                                    : ""
+                                }`}
+                                onClick={() =>
+                                  applyFilter(
+                                    "subCategory",
+                                    sub
+                                  )
+                                }
+                              >
+                                {sub}
+                              </p>
+
+                            )
+                          )}
+
+                        </div>
+                      )}
+
+                    </div>
+                  );
+                }
+              )}
+
+            </div>
+
+            {/* ===============================================
+                BRAND
+            =============================================== */}
+
+            <h3 className="product-cat-heading">
+              BRAND NAME
+            </h3>
+
+            <div className="fpc-brand-list">
+
+              {Object.entries(
+                allBrands
+              ).map(
+                (
+                  [
+                    brand,
+                    count,
+                  ]
+                ) => (
+
+                  <p
+                    key={brand}
+                    className={`subcategory-item ${
+                      brandParam ===
+                      brand
+                        ? "active-sub"
+                        : ""
+                    }`}
                     onClick={() =>
-                      setOpenCategory(openCategory === category ? null : category)
+                      applyFilter(
+                        "brand",
+                        brand
+                      )
                     }
                   >
-                    <span>{category}</span>
 
-                    {openCategory === category ? (
-                      <IoChevronDown className="category-arrow" />
-                    ) : (
-                      <IoChevronForward className="category-arrow" />
-                    )}
-                  </div>
-                  {openCategory === category && (
-                    <div className="subcategory-list">
-                      {subs.map((sub, i) => (
-                        <p
-                          key={sub}
-                          className={`subcategory-item ${activeSub === sub ? "active-sub" : ""
-                            }`}
-                          onClick={() => applyFilter("subCategory", sub)}
-                        >
-                          {sub}
-                        </p>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              );
-            })}
+                    {brand}
 
-            <h3 className="product-cat-heading">BRAND NAME</h3>
+                    {count !==
+                      undefined &&
+                      ` (${count})`}
 
-            {Object.entries(allBrands).map(([brand, count], i) => (
-              <p
-                key={brand}
-                className="subcategory-item"
-                onClick={() => applyFilter("brand", brand)}
-              >
-                {brand} ({count})
-              </p>
-            ))}
+                  </p>
+
+                )
+              )}
+
+            </div>
+
           </div>
+
         </div>
 
+        {/* ===================================================
+            PRODUCTS
+        =================================================== */}
+
         {loading ? (
-          <div style={{ textAlign: "center", padding: "40px" }}>Loading...</div>
-        ) : products.length === 0 ? (
+
           <div
+            className="fpc-loading"
             style={{
-              width: "100%",
-              textAlign: "center",
-              padding: "80px 20px",
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              justifyContent: "center",
+              textAlign:
+                "center",
+              padding:
+                "60px 20px",
             }}
           >
+            Loading...
+          </div>
+
+        ) : products.length ===
+          0 ? (
+
+          <div
+            className="fpc-no-products"
+            style={{
+              width: "100%",
+              textAlign:
+                "center",
+              padding:
+                "80px 20px",
+              display: "flex",
+              flexDirection:
+                "column",
+              alignItems:
+                "center",
+              justifyContent:
+                "center",
+            }}
+          >
+
             <img
               src="https://cdn-icons-png.flaticon.com/512/7486/7486740.png"
               alt="No Product Found"
-              style={{ width: "120px", marginBottom: "20px", opacity: 0.8 }}
+              style={{
+                width: "120px",
+                marginBottom:
+                  "20px",
+                opacity: 0.8,
+              }}
             />
 
-            <h2 style={{ fontSize: "24px", marginBottom: "10px", color: "#222" }}>
+            <h2
+              style={{
+                fontSize:
+                  "24px",
+                marginBottom:
+                  "10px",
+                color:
+                  "#222",
+              }}
+            >
               Product Not Found
             </h2>
 
-            <p style={{ color: "#777", fontSize: "15px" }}>
-              No products available for the selected filter.
+            <p
+              style={{
+                color:
+                  "#777",
+                fontSize:
+                  "15px",
+              }}
+            >
+              No products available
+              for the selected
+              filter.
             </p>
+
           </div>
+
         ) : (
+
           <div className="ecom-products-grid">
-            {products.map((item) => {
-              const brand = item?.Brand_Name || "";
-              const type = item?.Product_Subcategory || "";
-              const name = item?.Product_Name || "";
-              const mrp = Math.round(Number(item?.MRP || 0));
-              const cutPrice = Math.round(Number(item?.Product_price || 0));
-              const image = item?.image_01 || "";
-              const model = item?.Model_number || "";
 
-              const isWishlisted = wishlistItems.some(
-                (w) => w.product_id === item.product_id
-              );
+            {products.map(
+              (
+                item,
+                index
+              ) => {
 
-              return (
-                <div
-                  className="ecom-product-card"
-                  key={item.product_id}
-                  onClick={() => handleProductClick(item)}
-                >
-                  <div className="ecom-product-img">
-                    <img src={image} alt={name} />
+                if (!item) {
+                  return null;
+                }
 
-                    <div
-                      className={`wishlist-box ${isWishlisted ? "active" : ""}`}
-                      onClick={(e) => {
-                        e.stopPropagation();
+                /* ===========================================
+                   PRODUCT DATA
+                =========================================== */
 
-                        if (isWishlisted) {
-                          dispatch(removeFromWishlist(item.product_id));
+                const productId =
+                  item?.product_id ||
+                  item?._id ||
+                  item?.id ||
+                  index;
 
-                          window.showNotification(
-                            "Removed from Wishlist",
-                            "info"
-                          );
-                        } else {
-                          dispatch(addToWishlist(item));
+                const brand =
+                  item?.Brand_Name ||
+                  item?.Brand ||
+                  "";
 
-                          window.showNotification(
-                            "Added to Wishlist",
-                            "success"
-                          );
+                const type =
+                  item?.Product_Subcategory ||
+                  item?.Product_Category ||
+                  item?.Category ||
+                  "";
+
+                const name =
+                  item?.Product_Name ||
+                  item?.product_name ||
+                  "";
+
+                const model =
+                  item?.Model_number ||
+                  item?.Model_Number ||
+                  item?.model_number ||
+                  item?.model ||
+                  "";
+
+                const mrp =
+                  Math.round(
+                    Number(
+                      item?.MRP ||
+                      0
+                    )
+                  );
+
+                const cutPrice =
+                  Math.round(
+                    Number(
+                      item?.Product_price ||
+                      0
+                    )
+                  );
+
+                const image =
+                  item?.image_01 ||
+                  item?.Product_Image ||
+                  item?.image ||
+                  "/no-image.png";
+
+                const isWishlisted =
+                  isProductWishlisted(
+                    productId
+                  );
+
+                return (
+
+                  <div
+                    className="ecom-product-card"
+                    key={
+                      productId
+                    }
+                    onClick={() =>
+                      handleProductClick(
+                        item
+                      )
+                    }
+                  >
+
+                    {/* =====================================
+                        IMAGE
+                    ===================================== */}
+
+                    <div className="ecom-product-img">
+
+                      <img
+                        src={image}
+                        alt={
+                          name ||
+                          "Product"
                         }
-                      }}
-                    >
-                      {isWishlisted ? (
-                        <IoIosHeart className="wishlist-icon filled" />
-                      ) : (
-                        <IoIosHeartEmpty className="wishlist-icon" />
-                      )}
-                    </div>
-                  </div>
+                        loading="lazy"
+                        onError={(
+                          e
+                        ) => {
+                          e.currentTarget.src =
+                            "/no-image.png";
+                        }}
+                      />
 
-                  <div className="ecom-product-info">
+                      {/* ===================================
+                          WISHLIST
+                      =================================== */}
 
-                    {/* BRAND + RATING */}
-                    <div className="ecom-brand-row">
-                      <h5 className="ecom-brand">
-                        {brand}
-                      </h5>
+                      <button
+                        type="button"
+                        className={`wishlist-box ${
+                          isWishlisted
+                            ? "active"
+                            : ""
+                        }`}
+                        onClick={(
+                          e
+                        ) =>
+                          handleWishlist(
+                            e,
+                            item
+                          )
+                        }
+                        aria-label={
+                          isWishlisted
+                            ? "Remove from wishlist"
+                            : "Add to wishlist"
+                        }
+                      >
 
-                      {Number(item?.totalReviews || 0) > 0 &&
-                        Number(item?.averageRating || 0) > 0 && (
-                          <span className="ecom-rating">
-                            <FaStar className="rating-star" />
-                            {Number(item.averageRating).toFixed(1)}
-                            <span className="rating-count">
-                              ({item.totalReviews})
-                            </span>
-                          </span>
+                        {isWishlisted ? (
+                          <IoIosHeart
+                            className="wishlist-icon filled"
+                          />
+                        ) : (
+                          <IoIosHeartEmpty
+                            className="wishlist-icon"
+                          />
                         )}
+
+                      </button>
+
                     </div>
 
-                    {/* MODEL */}
-                    <p className="ecom-model">
-                      Model - {model}
-                    </p>
+                    {/* =====================================
+                        PRODUCT INFO
+                    ===================================== */}
 
-                    {/* CATEGORY */}
-                    <p className="ecom-type">
-                      {type}
-                    </p>
+                    <div className="ecom-product-info">
 
-                    {/* PRICE + OLD PRICE */}
-                    <div className="ecom-price-box">
-                      <span className="ecom-price">
-                        MRP ₹{mrp.toLocaleString("en-IN")}
-                      </span>
+                      {/* BRAND + RATING */}
 
-                      {cutPrice > mrp && (
-                        <span className="ecom-old-price">
-                          ₹{cutPrice.toLocaleString("en-IN")}
+                      <div className="ecom-brand-row">
+
+                        <h5 className="ecom-brand">
+                          {brand}
+                        </h5>
+
+                        {Number(
+                          item?.totalReviews ||
+                            0
+                        ) > 0 &&
+                          Number(
+                            item?.averageRating ||
+                              0
+                          ) > 0 && (
+
+                            <span className="ecom-rating">
+
+                              <FaStar className="rating-star" />
+
+                              {Number(
+                                item.averageRating
+                              ).toFixed(
+                                1
+                              )}
+
+                              <span className="rating-count">
+                                (
+                                {
+                                  item.totalReviews
+                                }
+                                )
+                              </span>
+
+                            </span>
+
+                          )}
+
+                      </div>
+
+                      {/* MODEL */}
+
+                      <p className="ecom-model">
+                        Model -{" "}
+                        {model}
+                      </p>
+
+                      {/* CATEGORY */}
+
+                      <p className="ecom-type">
+                        {type}
+                      </p>
+
+                      {/* PRICE */}
+
+                      <div className="ecom-price-box">
+
+                        <span className="ecom-price">
+                          MRP ₹
+                          {mrp.toLocaleString(
+                            "en-IN"
+                          )}
                         </span>
-                      )}
+
+                        {cutPrice >
+                          mrp && (
+
+                          <span className="ecom-old-price">
+                            ₹
+                            {cutPrice.toLocaleString(
+                              "en-IN"
+                            )}
+                          </span>
+
+                        )}
+
+                      </div>
+
                     </div>
 
                   </div>
-                </div>
-              );
-            })}
+
+                );
+              }
+            )}
+
           </div>
+
         )}
 
-        {totalPages > 1 && (
+        {/* ===================================================
+            PAGINATION
+        =================================================== */}
+
+        {totalPages > 1 &&
+          !loading && (
+
           <div className="pagination">
+
+            {/* PREVIOUS */}
+
             <button
-              disabled={currentPage === 1}
-              onClick={() => changePage(currentPage - 1)}
+              type="button"
+              disabled={
+                currentPage ===
+                1
+              }
+              onClick={() =>
+                changePage(
+                  currentPage -
+                    1
+                )
+              }
             >
               &lt; Prev
             </button>
 
-            <span className="page-number">
-              {currentPage}
-            </span>
+            {/* PAGE NUMBERS */}
+
+            {paginationItems.map(
+              (
+                page,
+                index
+              ) => {
+
+                if (
+                  page ===
+                  "..."
+                ) {
+                  return (
+                    <span
+                      key={`dots-${index}`}
+                      className="page-dots"
+                    >
+                      ...
+                    </span>
+                  );
+                }
+
+                return (
+                  <button
+                    type="button"
+                    key={page}
+                    className={
+                      currentPage ===
+                      page
+                        ? "active-page"
+                        : ""
+                    }
+                    onClick={() =>
+                      changePage(
+                        page
+                      )
+                    }
+                  >
+                    {page}
+                  </button>
+                );
+              }
+            )}
+
+            {/* NEXT */}
 
             <button
-              disabled={currentPage === totalPages}
-              onClick={() => changePage(currentPage + 1)}
+              type="button"
+              disabled={
+                currentPage ===
+                totalPages
+              }
+              onClick={() =>
+                changePage(
+                  currentPage +
+                    1
+                )
+              }
             >
               Next &gt;
             </button>
+
           </div>
 
         )}
+
       </div>
+
     </section>
   );
 }

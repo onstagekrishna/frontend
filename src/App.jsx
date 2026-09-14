@@ -45,7 +45,6 @@ import LoginPopup from "./Component/LoginPopup";
 
 import ForgotPassword from "./Pages/ForgotPassword";
 import ResetPassword from "./Pages/ResetPassword";
-
 import WhatsappChat from "./Component/WhatsappChat";
 
 import TermsConditions from "./Pages/TermsConditions";
@@ -62,6 +61,7 @@ import Faq from "./Pages/Faq";
 
 function AppContent() {
   const productsRef = useRef(null);
+  const popupTimerRef = useRef(null);
   const location = useLocation();
   const dispatch = useDispatch();
 
@@ -69,31 +69,28 @@ function AppContent() {
   const [showPopup, setShowPopup] = useState(false);
   const [pageLoading, setPageLoading] = useState(false);
 
-  const isAdminRoute = location.pathname.startsWith("/admin");
+  const isAdminRoute = location.pathname.toLowerCase().startsWith("/admin");
 
   const handleProductsClick = () => {
-    if (productsRef.current) {
-      productsRef.current.scrollIntoView({ behavior: "smooth" });
-    }
+    productsRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
+
+  /* POP NOTIFY */
   useEffect(() => {
     const cssLink = document.createElement("link");
     cssLink.rel = "stylesheet";
-    cssLink.href =
-      "https://cdn.jsdelivr.net/gh/lekoala/pop-notify/pop-notify.css";
+    cssLink.href = "https://cdn.jsdelivr.net/gh/lekoala/pop-notify/pop-notify.css";
     document.head.appendChild(cssLink);
 
     const iconLink = document.createElement("link");
     iconLink.rel = "stylesheet";
-    iconLink.href =
-      "https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0";
+    iconLink.href = "https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0";
     document.head.appendChild(iconLink);
 
     const script = document.createElement("script");
     script.type = "module";
-    script.src =
-      "https://cdn.jsdelivr.net/gh/lekoala/pop-notify@master/pop-notify.min.js";
+    script.src = "https://cdn.jsdelivr.net/gh/lekoala/pop-notify@master/pop-notify.min.js";
     document.body.appendChild(script);
 
     script.onload = () => {
@@ -104,27 +101,18 @@ function AppContent() {
           placement: "top-center",
           stacking: true,
           maxNotifications: 3,
-          // duration: 10000,
-          iconTransformer: (icon) => {
-            return `<span class="material-symbols-outlined">${icon}</span>`;
-          },
+          iconTransformer: (icon) =>
+            `<span class="material-symbols-outlined">${icon}</span>`,
         });
 
         window.showNotification = (message, type = "success") => {
-
           let icon = "check_circle";
-
           if (type === "error") icon = "error";
           if (type === "warning") icon = "warning";
           if (type === "info") icon = "info";
 
-          // Existing notifications
           const notifications = document.querySelectorAll("pn-notification");
-
-
-          if (notifications.length >= 3) {
-            notifications[0].remove();
-          }
+          if (notifications.length >= 3) notifications[0].remove();
 
           popNotify.notify(message, {
             variant: type,
@@ -142,6 +130,8 @@ function AppContent() {
     };
   }, []);
 
+
+  /* GET USER */
   useEffect(() => {
     const getUser = async () => {
       try {
@@ -153,12 +143,10 @@ function AppContent() {
         const data = await res.json();
 
         if (data?.user) {
-          dispatch(
-            setUser({
-              user: data.user,
-              token: localStorage.getItem("token"),
-            })
-          );
+          dispatch(setUser({
+            user: data.user,
+            token: localStorage.getItem("token"),
+          }));
         }
       } catch (err) {
         console.log("User fetch error:", err);
@@ -168,46 +156,108 @@ function AppContent() {
     getUser();
   }, [dispatch]);
 
+
+  /* MANUAL LOGIN POPUP */
   useEffect(() => {
     window.openLoginPopup = () => {
-      if (location.pathname.startsWith("/login")) return;
-      if (location.pathname.startsWith("/admin")) return;
+      const path = location.pathname.toLowerCase();
+
+      if (
+        user ||
+        path === "/login" ||
+        path === "/signup" ||
+        path === "/verify-otp" ||
+        path.startsWith("/admin")
+      ) return;
 
       setShowPopup(true);
-      sessionStorage.setItem("popupShown", "true");
     };
-  }, [location.pathname]);
 
+    return () => delete window.openLoginPopup;
+  }, [location.pathname, user]);
+
+
+  /* PAGE LOADING */
   useEffect(() => {
     setPageLoading(true);
 
-    const timer = setTimeout(() => {
-      setPageLoading(false);
-    }, 800);
+    const timer = setTimeout(() => setPageLoading(false), 800);
 
     return () => clearTimeout(timer);
   }, [location.pathname]);
 
+
+  /* FIRST POPUP - 5 SECONDS */
   useEffect(() => {
+    const path = location.pathname.toLowerCase();
+
     const isAuthPage =
-      location.pathname === "/login" ||
-      location.pathname === "/signup" ||
-      location.pathname === "/verify-otp";
+      path === "/login" ||
+      path === "/signup" ||
+      path === "/verify-otp";
 
-
-    if (!user && !isAuthPage && !isAdminRoute) {
-      if (sessionStorage.getItem("popupShown")) return;
-
-      const timer = setTimeout(() => {
-        setShowPopup(true);
-        sessionStorage.setItem("popupShown", "true");
-      }, 5000);
-
-      return () => clearTimeout(timer);
-    } else {
+    if (user || isAuthPage || isAdminRoute) {
       setShowPopup(false);
+
+      if (popupTimerRef.current) {
+        clearTimeout(popupTimerRef.current);
+        popupTimerRef.current = null;
+      }
+
+      return;
     }
+
+    popupTimerRef.current = setTimeout(() => {
+      setShowPopup(true);
+    }, 5000);
+
+    return () => {
+      if (popupTimerRef.current) {
+        clearTimeout(popupTimerRef.current);
+        popupTimerRef.current = null;
+      }
+    };
   }, [user, location.pathname, isAdminRoute]);
+
+
+  /* CLOSE → 10 SECONDS → POPUP */
+  const handlePopupClose = () => {
+    setShowPopup(false);
+
+    if (user) return;
+
+    if (popupTimerRef.current) {
+      clearTimeout(popupTimerRef.current);
+    }
+
+    popupTimerRef.current = setTimeout(() => {
+      const path = window.location.pathname.toLowerCase();
+
+      const isAuthPage =
+        path === "/login" ||
+        path === "/signup" ||
+        path === "/verify-otp";
+
+      if (
+        !user &&
+        !isAuthPage &&
+        !path.startsWith("/admin")
+      ) {
+        setShowPopup(true);
+      }
+    }, 10000);
+  };
+
+
+  /* CLEAR TIMER */
+  useEffect(() => {
+    return () => {
+      if (popupTimerRef.current) {
+        clearTimeout(popupTimerRef.current);
+      }
+    };
+  }, []);
+
 
   return (
     <>
@@ -220,7 +270,7 @@ function AppContent() {
       <Header onProductsClick={handleProductsClick} />
 
       {showPopup && !isAdminRoute && (
-        <LoginPopup onClose={() => setShowPopup(false)} />
+        <LoginPopup onClose={handlePopupClose} />
       )}
 
       <Routes>
@@ -252,14 +302,19 @@ function AppContent() {
         <Route path="/search" element={<SearchPage />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password" element={<ResetPassword />} />
+
         <Route path="/terms" element={<TermsConditions />} />
         <Route path="/privacy" element={<PrivacyPolicy />} />
         <Route path="/refund" element={<RefundPolicy />} />
+
         <Route path="/contactus" element={<Contact />} />
         <Route path="/faq" element={<Faq />} />
         <Route path="/blog-details" element={<BlogDetails />} />
 
-        <Route path="/reset-password/:token" element={<ChangePasswordFromEmail />} />
+        <Route
+          path="/reset-password/:token"
+          element={<ChangePasswordFromEmail />}
+        />
 
         <Route path="/admin" element={<AdminLayout />}>
           <Route index element={<Dashboard />} />
@@ -269,9 +324,6 @@ function AppContent() {
           <Route path="user-queries" element={<UserQueries />} />
           <Route path="update-orders" element={<UpdateOrders />} />
           <Route path="refunded-order" element={<RefundedOrder />} />
-
-
-
         </Route>
       </Routes>
 
@@ -280,6 +332,7 @@ function AppContent() {
     </>
   );
 }
+
 
 function App() {
   return (

@@ -1,8 +1,10 @@
 import { useState, useEffect, useRef } from "react";
 import { useSearch } from "../context/SearchContext";
 import { VscSearch } from "react-icons/vsc";
-import { useNavigate } from "react-router-dom";
 import { MdClose } from "react-icons/md";
+import { useNavigate } from "react-router-dom";
+import "./SearchBar.css";
+
 
 function SearchBar({ onSelect }) {
   const { setSearchQuery, handleSearch } = useSearch();
@@ -13,15 +15,30 @@ function SearchBar({ onSelect }) {
   const [showHistory, setShowHistory] = useState(false);
 
   const wrapperRef = useRef(null);
+  const inputRef = useRef(null);
 
-  // Load history
+  const normalizeSearch = (value = "") =>
+    value
+      .toString()
+      .toLowerCase()
+      .replace(/[\s\-_./\\]+/g, "")
+      .replace(/[^a-z0-9]/g, "");
+
+  /* Load search history */
   useEffect(() => {
-    const savedHistory =
-      JSON.parse(localStorage.getItem("searchHistory")) || [];
-    setHistory(savedHistory);
+    try {
+      const savedHistory =
+        JSON.parse(localStorage.getItem("searchHistory")) || [];
+
+      if (Array.isArray(savedHistory)) {
+        setHistory(savedHistory);
+      }
+    } catch {
+      setHistory([]);
+    }
   }, []);
 
-  // Hide history when clicking outside
+  /* Close history when clicked outside */
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (
@@ -35,26 +52,30 @@ function SearchBar({ onSelect }) {
     document.addEventListener("mousedown", handleClickOutside);
 
     return () => {
-      document.removeEventListener(
-        "mousedown",
-        handleClickOutside
-      );
+      document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
 
   const saveSearchHistory = (searchTerm) => {
-    let savedHistory =
-      JSON.parse(localStorage.getItem("searchHistory")) || [];
+    let savedHistory = [];
 
-    // Remove duplicate
+    try {
+      savedHistory =
+        JSON.parse(localStorage.getItem("searchHistory")) || [];
+    } catch {
+      savedHistory = [];
+    }
+
+    if (!Array.isArray(savedHistory)) {
+      savedHistory = [];
+    }
+
     savedHistory = savedHistory.filter(
-      (item) => item.toLowerCase() !== searchTerm.toLowerCase()
+      (item) =>
+        normalizeSearch(item) !== normalizeSearch(searchTerm)
     );
 
-    // Add latest search on top
     savedHistory.unshift(searchTerm);
-
-    // Keep only last 10 searches
     savedHistory = savedHistory.slice(0, 10);
 
     localStorage.setItem(
@@ -64,6 +85,7 @@ function SearchBar({ onSelect }) {
 
     setHistory(savedHistory);
   };
+
   const removeHistory = (searchItem) => {
     const updatedHistory = history.filter(
       (item) => item !== searchItem
@@ -80,77 +102,127 @@ function SearchBar({ onSelect }) {
       setShowHistory(false);
     }
   };
+
+  const closeKeyboardAndSearch = () => {
+    requestAnimationFrame(() => {
+      inputRef.current?.blur();
+    });
+  };
+
   const handleSearchClick = (searchTerm) => {
-    const trimmedQuery = searchTerm.trim();
+    const originalQuery = searchTerm.trim();
 
-    if (!trimmedQuery) return;
+    if (!originalQuery) {
+      inputRef.current?.focus();
+      return;
+    }
 
-    saveSearchHistory(trimmedQuery);
+    const normalizedQuery = normalizeSearch(originalQuery);
 
-    setSearchQuery(trimmedQuery);
-    handleSearch();
+    saveSearchHistory(originalQuery);
 
-    // Close history
+    setSearchQuery(normalizedQuery);
+
+    const compactModel =
+      normalizedQuery.match(/^([a-z]+)(\d.*)$/);
+
+    const backendQuery = compactModel
+      ? compactModel[1]
+      : originalQuery;
+
+    handleSearch(backendQuery);
+
     setShowHistory(false);
-
-    // Clear input after search
     setQuery("");
+
+    closeKeyboardAndSearch();
+
     onSelect?.();
 
-    navigate(`/search?q=${encodeURIComponent(trimmedQuery)}`);
+    navigate(
+      `/search?q=${encodeURIComponent(originalQuery)}`
+    );
+  };
+
+  const handleInputChange = (e) => {
+    const value = e.target.value;
+
+    setQuery(value);
+    setSearchQuery(normalizeSearch(value));
+  };
+
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      handleSearchClick(query);
+    }
   };
 
   return (
-    <div className="kr-search-wrapper" ref={wrapperRef}>
-      <input
-        type="text"
-        placeholder="Search for instruments..."
-        value={query}
-        onChange={(e) => {
-          setQuery(e.target.value);
-          setSearchQuery(e.target.value);
-        }}
-        onFocus={() => {
-          if (history.length > 0) {
-            setShowHistory(true);
-          }
-        }}
-        onKeyDown={(e) => {
-          if (e.key === "Enter") {
-            handleSearchClick(query);
-          }
-        }}
-        className="kr-search-input"
-      />
-
-
-
-      <button
-        className="kr-search-btn"
-        onClick={() => handleSearchClick(query)}
-      >
-        <img
-          src="https://pub-8fb728ccc32b4c72a6f05fff3cf3d811.r2.dev/3rd%20brand/download.gif"
-          alt="Search"
-          className="kr-search-gif"
+    <div
+      className="kr-search-wrapper"
+      ref={wrapperRef}
+    >
+      <div className="kr-search-box">
+        <input
+          ref={inputRef}
+          type="search"
+          inputMode="search"
+          enterKeyHint="search"
+          value={query}
+          placeholder="Search for instruments..."
+          autoComplete="off"
+          autoCorrect="off"
+          autoCapitalize="none"
+          spellCheck={false}
+          className="kr-search-input"
+          onChange={handleInputChange}
+          onFocus={() => {
+            if (history.length > 0) {
+              setShowHistory(true);
+            }
+          }}
+          onKeyDown={handleKeyDown}
         />
-      </button>
+
+        <button
+          type="button"
+          className="kr-search-btn"
+          aria-label="Search"
+          onMouseDown={(e) => e.preventDefault()}
+          onClick={() => handleSearchClick(query)}
+        >
+          <img
+            src="https://pub-8fb728ccc32b4c72a6f05fff3cf3d811.r2.dev/3rd%20brand/download.gif"
+            alt="Search"
+            className="kr-search-gif"
+          />
+        </button>
+      </div>
 
       {showHistory && history.length > 0 && (
         <div className="kr-search-history">
           {history.map((item, index) => (
-            <div key={index} className="kr-history-item">
-
-              <div
+            <div
+              key={`${item}-${index}`}
+              className="kr-history-item"
+            >
+              <button
+                type="button"
                 className="kr-history-left"
-                onClick={() => handleSearchClick(item)}
+                onMouseDown={(e) => e.preventDefault()}
+                onClick={() =>
+                  handleSearchClick(item)
+                }
               >
                 <VscSearch />
                 <span>{item}</span>
-              </div>
+              </button>
 
               <button
+                type="button"
                 className="kr-history-delete"
+                aria-label={`Remove ${item}`}
                 onClick={(e) => {
                   e.stopPropagation();
                   removeHistory(item);
@@ -158,7 +230,6 @@ function SearchBar({ onSelect }) {
               >
                 <MdClose />
               </button>
-
             </div>
           ))}
         </div>

@@ -2,19 +2,8 @@ import React, { useEffect, useMemo } from "react";
 import { useSearch } from "../context/SearchContext";
 import { useLocation, useNavigate } from "react-router-dom";
 import { slugify } from "../utils/slugify";
-
-// ❤️ ICONS
-import {
-  IoIosHeart,
-  IoIosHeartEmpty,
-} from "react-icons/io";
-
-// 🔥 REDUX
-import {
-  useDispatch,
-  useSelector,
-} from "react-redux";
-
+import { IoIosHeart, IoIosHeartEmpty } from "react-icons/io";
+import { useDispatch, useSelector } from "react-redux";
 import {
   addToWishlist,
   removeFromWishlist,
@@ -30,59 +19,66 @@ export default function SearchPage() {
 
   const location = useLocation();
   const navigate = useNavigate();
-
   const dispatch = useDispatch();
 
   const wishlistItems = useSelector(
     (state) => state.Wishlist?.items || []
   );
 
-  // ==========================================
-  // URL BASED SEARCH
-  // ==========================================
+  /* ================= NORMALIZE ================= */
+
+  const normalizeText = (value = "") =>
+    String(value)
+      .toLowerCase()
+      .replace(/[^a-z0-9]/g, "")
+      .trim();
+
+  /* ================= URL SEARCH ================= */
 
   useEffect(() => {
-    const params = new URLSearchParams(
-      location.search
+    const params = new URLSearchParams(location.search);
+    const query = (params.get("q") || "").trim();
+
+    if (!query) return;
+
+    const normalizedQuery = normalizeText(query);
+
+    setSearchQuery(normalizedQuery);
+
+    /*
+      MG30 / MG-30 / MG 30
+      ↓
+      mg30
+      ↓
+      backend search = mg
+      ↓
+      MG products milenge
+      ↓
+      frontend MG-30 filter karega
+    */
+
+    const compactModel = normalizedQuery.match(
+      /^([a-z]+)(\d.*)$/
     );
 
-    const query = params.get("q");
-
-    if (query) {
-      setSearchQuery(query);
+    if (compactModel) {
+      handleSearch(compactModel[1]);
+    } else {
       handleSearch(query);
     }
   }, [location.search]);
 
-  // ==========================================
-  // NORMALIZE TEXT
-  // ==========================================
-
-  const normalizeText = (value) => {
-    return String(value || "")
-      .toLowerCase()
-      .replace(/[-_/]+/g, " ")
-      .replace(/\s+/g, " ")
-      .trim();
-  };
-
-  // ==========================================
-  // SEARCH QUERY
-  // ==========================================
+  /* ================= CURRENT QUERY ================= */
 
   const searchQuery = useMemo(() => {
-    const params = new URLSearchParams(
-      location.search
-    );
+    const params = new URLSearchParams(location.search);
 
     return normalizeText(
       params.get("q") || ""
     );
   }, [location.search]);
 
-  // ==========================================
-  // STRICT SEARCH FILTER
-  // ==========================================
+  /* ================= SMART FILTER ================= */
 
   const filteredSearchResults = useMemo(() => {
     if (!Array.isArray(searchResults)) {
@@ -93,37 +89,77 @@ export default function SearchPage() {
       return searchResults;
     }
 
-    const queryWords = searchQuery
-      .split(" ")
+    const params = new URLSearchParams(location.search);
+    const originalQuery =
+      params.get("q") || "";
+
+    const queryWords = originalQuery
+      .toLowerCase()
+      .trim()
+      .split(/\s+/)
+      .filter(Boolean)
+      .map(normalizeText)
       .filter(Boolean);
 
     const results = searchResults
       .map((item) => {
         if (!item) return null;
 
+        /* ================= SEARCH FIELDS ================= */
+
         const brand = normalizeText(
-          item.Brand_Name
+          item.Brand_Name ||
+          item.Brand ||
+          item.brand ||
+          item.brand_name
         );
 
         const name = normalizeText(
-          item.Product_Name
+          item.Product_Name ||
+          item.product_name ||
+          item.Name
         );
 
         const model = normalizeText(
-          item.Model_number
+          item.Model_number ||
+          item.Model_Number ||
+          item.model_number ||
+          item.model
         );
 
         const category = normalizeText(
-          item.Product_Category
+          item.Product_Category ||
+          item.product_category ||
+          item.Category
         );
 
         const subCategory = normalizeText(
-          item.Product_Subcategory
+          item.Product_Subcategory ||
+          item.product_subcategory ||
+          item.Subcategory
         );
 
-        // ======================================
-        // ALL SEARCHABLE DATA
-        // ======================================
+        const description = normalizeText(
+          item.Product_Description ||
+          item.product_description ||
+          item.description ||
+          item.Description
+        );
+
+        const productType = normalizeText(
+          item.Product_Type ||
+          item.product_type ||
+          item.Type
+        );
+
+        const sku = normalizeText(
+          item.SKU ||
+          item.sku ||
+          item.Product_Code ||
+          item.product_code
+        );
+
+        /* ================= ALL SEARCHABLE DATA ================= */
 
         const searchableText = [
           brand,
@@ -131,107 +167,79 @@ export default function SearchPage() {
           model,
           category,
           subCategory,
+          description,
+          productType,
+          sku,
         ]
           .filter(Boolean)
           .join(" ");
 
-        // ======================================
-        // EVERY QUERY WORD MUST MATCH
-        // ======================================
+        /* ================= DIRECT MATCH ================= */
+
+        const directMatch =
+          searchableText.includes(searchQuery);
+
+        /* ================= WORD MATCH ================= */
 
         const allWordsMatch =
+          queryWords.length > 0 &&
           queryWords.every((word) =>
             searchableText.includes(word)
           );
 
-        if (!allWordsMatch) {
+        if (!directMatch && !allWordsMatch) {
           return null;
         }
 
-        // ======================================
-        // RELEVANCE SCORE
-        // ======================================
+        /* ================= SCORE ================= */
 
         let score = 0;
 
-        // Exact product name
-        if (
-          name === searchQuery
-        ) {
+        if (model === searchQuery) {
+          score += 250;
+        }
+
+        if (name === searchQuery) {
+          score += 220;
+        }
+
+        if (model.includes(searchQuery)) {
+          score += 180;
+        }
+
+        if (name.includes(searchQuery)) {
+          score += 150;
+        }
+
+        if (brand === searchQuery) {
           score += 100;
         }
 
-        // Product name starts with search
-        if (
-          name.startsWith(searchQuery)
-        ) {
+        if (brand.includes(searchQuery)) {
           score += 80;
         }
 
-        // Category exact match
-        if (
-          category === searchQuery
-        ) {
+        if (category === searchQuery) {
           score += 70;
         }
 
-        // Subcategory exact match
-        if (
-          subCategory === searchQuery
-        ) {
-          score += 65;
-        }
-
-        // Brand exact match
-        if (
-          brand === searchQuery
-        ) {
+        if (category.includes(searchQuery)) {
           score += 60;
         }
 
-        // Model exact match
-        if (
-          model === searchQuery
-        ) {
-          score += 55;
+        if (subCategory.includes(searchQuery)) {
+          score += 50;
         }
 
-        // Product name contains query
-        if (
-          name.includes(searchQuery)
-        ) {
+        if (sku.includes(searchQuery)) {
           score += 40;
         }
 
-        // Category contains query
-        if (
-          category.includes(searchQuery)
-        ) {
-          score += 30;
-        }
-
-        // Subcategory contains query
-        if (
-          subCategory.includes(searchQuery)
-        ) {
-          score += 25;
-        }
-
-        // Brand contains query
-        if (
-          brand.includes(searchQuery)
-        ) {
+        if (description.includes(searchQuery)) {
           score += 20;
         }
 
-        // ======================================
-        // GENERIC GUITAR SEARCH
-        // ======================================
-        //
-        // "guitar" search par actual guitar
-        // products ko accessories se upar rakho.
-        //
-        // ======================================
+        /* ================= GUITAR SEARCH ================= */
 
         if (
           searchQuery === "guitar" ||
@@ -251,9 +259,14 @@ export default function SearchPage() {
             "cover",
             "stand",
             "bag",
-            "gig bag",
+            "gigbag",
             "accessories",
           ];
+
+          const isActualGuitar =
+            name.includes("guitar") ||
+            category.includes("guitar") ||
+            subCategory.includes("guitar");
 
           const isAccessory =
             accessoryWords.some(
@@ -262,11 +275,6 @@ export default function SearchPage() {
                 category.includes(word) ||
                 subCategory.includes(word)
             );
-
-          const isActualGuitar =
-            name.includes("guitar") ||
-            category.includes("guitar") ||
-            subCategory.includes("guitar");
 
           if (isActualGuitar) {
             score += 100;
@@ -283,27 +291,25 @@ export default function SearchPage() {
         };
       })
       .filter(Boolean)
-      .sort(
-        (a, b) => b.score - a.score
-      )
+      .sort((a, b) => b.score - a.score)
       .map((result) => result.item);
 
     return results;
   }, [
     searchResults,
     searchQuery,
+    location.search,
   ]);
 
-  // ==========================================
-  // PRODUCT CLICK
-  // ==========================================
+  /* ================= PRODUCT CLICK ================= */
 
-  const handleProductClick = (
-    product
-  ) => {
+  const handleProductClick = (product) => {
     if (!product) return;
 
-    const identifier = slugify(product.Product_Name) || product.product_id;
+    const identifier =
+      slugify(product.Product_Name) ||
+      product.product_id;
+
     if (!identifier) return;
 
     navigate(
@@ -314,9 +320,7 @@ export default function SearchPage() {
     );
   };
 
-  // ==========================================
-  // LOADING
-  // ==========================================
+  /* ================= LOADING ================= */
 
   if (loading) {
     return (
@@ -331,52 +335,45 @@ export default function SearchPage() {
     );
   }
 
-  // ==========================================
-  // NO PRODUCT
-  // ==========================================
+  /* ================= NO PRODUCTS ================= */
 
   if (
     !loading &&
     filteredSearchResults.length === 0
   ) {
+    const originalQuery =
+      new URLSearchParams(
+        location.search
+      ).get("q") || "";
+
     return (
       <div className="no-products-found">
-
         <img
           src="https://pub-1cfbd62bb18344a08190c13684f63517.r2.dev/274/Gemini_Generated_Image_juv4kfjuv4kfjuv4%201-Photoroom.png"
           alt="No products"
           className="no-products-img"
         />
 
-        <h2>
-          No Products Found
-        </h2>
+        <h2>No Products Found</h2>
 
         <p>
-          No products found for "
-          {searchQuery}"
+          No products found for "{originalQuery}"
         </p>
 
         <button
           className="back-home-btn"
-          onClick={() =>
-            navigate("/")
-          }
+          onClick={() => navigate("/")}
         >
           Back to Home
         </button>
-
       </div>
     );
   }
 
-  // ==========================================
-  // PRODUCTS
-  // ==========================================
+  /* ================= PRODUCTS ================= */
 
   return (
     <section className="ecom-products-section">
-
       <div className="container">
 
         <h2 className="ecom-products-heading">
@@ -388,40 +385,46 @@ export default function SearchPage() {
           {filteredSearchResults.map(
             (item, index) => {
 
-              if (!item) {
-                return null;
-              }
+              if (!item) return null;
 
               const brand =
-                item?.Brand_Name || "";
+                item?.Brand_Name ||
+                item?.Brand ||
+                item?.brand ||
+                "";
 
               const type =
                 item?.Product_Subcategory ||
                 item?.Product_Category ||
+                item?.Category ||
                 "";
 
               const name =
-                item?.Product_Name || "";
+                item?.Product_Name ||
+                item?.product_name ||
+                "";
 
               const model =
-                item?.Model_number || "";
+                item?.Model_number ||
+                item?.Model_Number ||
+                item?.model_number ||
+                item?.model ||
+                "";
 
               const mrp = Math.round(
-                Number(
-                  item?.MRP || 0
-                )
+                Number(item?.MRP || 0)
               );
 
-              const oldPrice =
-                Math.round(
-                  Number(
-                    item?.Product_price || 0
-                  )
-                );
+              const oldPrice = Math.round(
+                Number(
+                  item?.Product_price || 0
+                )
+              );
 
               const image =
                 item?.image_01 ||
                 item?.Product_Image ||
+                item?.image ||
                 "/no-image.png";
 
               const id =
@@ -429,22 +432,17 @@ export default function SearchPage() {
                 item?._id ||
                 item?.id;
 
-              // ====================================
-              // WISHLIST
-              // ====================================
+              /* ================= WISHLIST ================= */
 
               const isWishlisted =
-                Array.isArray(
-                  wishlistItems
-                ) &&
+                Array.isArray(wishlistItems) &&
                 wishlistItems.some(
                   (w) =>
                     String(
                       w?.product_id ||
-                        w?._id ||
-                        w?.id
-                    ) ===
-                    String(id)
+                      w?._id ||
+                      w?.id
+                    ) === String(id)
                 );
 
               return (
@@ -452,9 +450,7 @@ export default function SearchPage() {
                   className="ecom-product-card"
                   key={id || index}
                   onClick={() =>
-                    handleProductClick(
-                      item
-                    )
+                    handleProductClick(item)
                   }
                 >
 
@@ -463,8 +459,7 @@ export default function SearchPage() {
                   <div
                     className="ecom-product-img"
                     style={{
-                      position:
-                        "relative",
+                      position: "relative",
                     }}
                   >
 
@@ -491,21 +486,13 @@ export default function SearchPage() {
                           : ""
                       }`}
                       onClick={(e) => {
-
                         e.stopPropagation();
 
-                        if (!id) {
-                          return;
-                        }
+                        if (!id) return;
 
-                        if (
-                          isWishlisted
-                        ) {
-
+                        if (isWishlisted) {
                           dispatch(
-                            removeFromWishlist(
-                              id
-                            )
+                            removeFromWishlist(id)
                           );
 
                           if (
@@ -517,14 +504,11 @@ export default function SearchPage() {
                               "info"
                             );
                           }
-
                         } else {
-
                           dispatch(
                             addToWishlist({
                               ...item,
-                              product_id:
-                                id,
+                              product_id: id,
                             })
                           );
 
@@ -537,9 +521,7 @@ export default function SearchPage() {
                               "success"
                             );
                           }
-
                         }
-
                       }}
                     >
 
@@ -571,13 +553,12 @@ export default function SearchPage() {
                       </h5>
 
                       {Number(
-                        item?.totalReviews ||
-                          0
+                        item?.totalReviews || 0
                       ) > 0 &&
                         Number(
-                          item?.averageRating ||
-                            0
+                          item?.averageRating || 0
                         ) > 0 && (
+
                           <span className="ecom-rating">
 
                             <span className="rating-star">
@@ -589,11 +570,7 @@ export default function SearchPage() {
                             ).toFixed(1)}
 
                             <span className="rating-count">
-                              (
-                              {
-                                item.totalReviews
-                              }
-                              )
+                              ({item.totalReviews})
                             </span>
 
                           </span>
@@ -643,9 +620,7 @@ export default function SearchPage() {
           )}
 
         </div>
-
       </div>
-
     </section>
   );
 }

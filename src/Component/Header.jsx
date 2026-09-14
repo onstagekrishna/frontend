@@ -188,7 +188,7 @@ const productBrands = [
 
 const categories = [
   {
-    name: "Drums & Drums Accessories",
+    name: "Drums & Drum Accessories",
     image:
       "https://pub-2495b31388a64466968bc41b633cc28a.r2.dev/drum-set-dark-room-with-beautiful-lighting-snare-drum-cymbals-bass-drum%20(1).jpg",
   },
@@ -218,7 +218,7 @@ const categories = [
       "https://pub-2495b31388a64466968bc41b633cc28a.r2.dev/musical-keyboard-tablet-dark-room-music-production.jpg",
   },
   {
-    name: "Pro Audio & Studios",
+    name: "Pro Audio & Studio",
     image:
       "https://pub-2495b31388a64466968bc41b633cc28a.r2.dev/digital-mixer-recording-studio-with-computer-recording-music-concept-creativity-show-business-space-text.jpg",
   },

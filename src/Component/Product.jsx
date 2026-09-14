@@ -2,50 +2,32 @@ import React, { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { slugify } from "../utils/slugify";
 import { FaStar } from "react-icons/fa";
+import { MdExpandMore } from "react-icons/md";
 import { useDispatch, useSelector } from "react-redux";
+
 import {
   addToWishlist,
   removeFromWishlist,
 } from "../Redux/Slices/WishlistSlice";
+
 import {
   IoIosHeart,
   IoIosHeartEmpty,
 } from "react-icons/io";
 
 const tabs = [
-  {
-    label: "ACOUSTIC GUITARS",
-    type: "Acoustic Guitars",
-  },
-  {
-    label: "ELECTRIC GUITARS",
-    type: "Electric Guitars",
-  },
-  {
-    label: "AMPLIFIERS",
-    type: "Amplifiers",
-  },
-  {
-    label: "MPC",
-    type: "MPC",
-  },
-  {
-    label: "CONTROLLERS",
-    type: "Controllers",
-  },
-  {
-    label: "PIANO & KEYBOARDS",
-    type: "Piano & Keyboards",
-  },
-  {
-    label: "GUITARS STRING",
-    type: "String",
-  },
-  {
-    label: "STRAPS",
-    type: "Straps",
-  },
+  { label: "ACOUSTIC GUITARS", type: "Acoustic Guitars" },
+  { label: "ELECTRIC GUITARS", type: "Electric Guitars" },
+  { label: "AMPLIFIERS", type: "Amplifiers" },
+  { label: "MPC", type: "MPC" },
+  { label: "CONTROLLERS", type: "Controllers" },
+  { label: "PIANO & KEYBOARDS", type: "Piano & Keyboards" },
+  { label: "GUITARS STRING", type: "String" },
+  { label: "STRAPS", type: "Straps" },
 ];
+
+const INITIAL_VISIBLE_COUNT = 10;
+const PRODUCTS_PER_CLICK = 10;
 
 const AllProducts = () => {
   const navigate = useNavigate();
@@ -61,32 +43,28 @@ const AllProducts = () => {
   const [loading, setLoading] = useState(false);
   const [fade, setFade] = useState(false);
 
-  // ==========================================
+  // Only 10 products initially
+  const [visibleCount, setVisibleCount] = useState(
+    INITIAL_VISIBLE_COUNT
+  );
+
+  // --------------------------------------------------
   // FORMAT PRICE
-  // ==========================================
-
+  // --------------------------------------------------
   const formatPrice = (value) => {
-    return Math.round(
-      Number(value || 0)
-    ).toLocaleString("en-IN");
+    return Math.round(Number(value || 0)).toLocaleString("en-IN");
   };
 
-  // ==========================================
+  // --------------------------------------------------
   // GET PRODUCT ID
-  // ==========================================
-
+  // --------------------------------------------------
   const getProductId = (item) => {
-    return (
-      item?._id ||
-      item?.product_id ||
-      item?.id
-    );
+    return item?._id || item?.product_id || item?.id;
   };
 
-  // ==========================================
+  // --------------------------------------------------
   // GET PRICE
-  // ==========================================
-
+  // --------------------------------------------------
   const getPrice = (item) => {
     return Number(
       item?.price ||
@@ -95,10 +73,9 @@ const AllProducts = () => {
     );
   };
 
-  // ==========================================
+  // --------------------------------------------------
   // GET STOCK
-  // ==========================================
-
+  // --------------------------------------------------
   const getStock = (item) => {
     const stock =
       item?.Product_Quantity ??
@@ -116,35 +93,11 @@ const AllProducts = () => {
     return Number(stock);
   };
 
-  // ==========================================
+  // --------------------------------------------------
   // BRAND-WISE PRODUCT ARRANGEMENT
-  // ==========================================
-  //
-  // Example:
-  //
-  // Martin
-  // Cort
-  // Fender
-  // Yamaha
-  //
-  // Martin
-  // Cort
-  // Fender
-  // Yamaha
-  //
-  // Martin
-  // Cort
-  // Fender
-  //
-  // Isse same brand ke products
-  // continuously nahi aayenge.
-  // ==========================================
-
+  // --------------------------------------------------
   const arrangeProductsByBrand = (items) => {
-    if (
-      !Array.isArray(items) ||
-      items.length === 0
-    ) {
+    if (!Array.isArray(items) || items.length === 0) {
       return [];
     }
 
@@ -158,8 +111,7 @@ const AllProducts = () => {
           "Other"
       ).trim();
 
-      const brandKey =
-        brandName.toLowerCase();
+      const brandKey = brandName.toLowerCase();
 
       if (!brandGroups[brandKey]) {
         brandGroups[brandKey] = {
@@ -168,14 +120,10 @@ const AllProducts = () => {
         };
       }
 
-      brandGroups[
-        brandKey
-      ].products.push(item);
+      brandGroups[brandKey].products.push(item);
     });
 
-    const brands =
-      Object.keys(brandGroups);
-
+    const brands = Object.keys(brandGroups);
     const arrangedProducts = [];
 
     let round = 0;
@@ -185,8 +133,7 @@ const AllProducts = () => {
 
       brands.forEach((brandKey) => {
         const brandProducts =
-          brandGroups[brandKey]
-            .products;
+          brandGroups[brandKey].products;
 
         if (brandProducts[round]) {
           arrangedProducts.push(
@@ -207,10 +154,9 @@ const AllProducts = () => {
     return arrangedProducts;
   };
 
-  // ==========================================
+  // --------------------------------------------------
   // FETCH PRODUCTS
-  // ==========================================
-
+  // --------------------------------------------------
   const fetchProductsByType = async (tab) => {
     try {
       setFade(true);
@@ -223,9 +169,7 @@ const AllProducts = () => {
       );
 
       if (!res.ok) {
-        throw new Error(
-          `API Error: ${res.status}`
-        );
+        throw new Error(`API Error: ${res.status}`);
       }
 
       const data = await res.json();
@@ -240,26 +184,21 @@ const AllProducts = () => {
         data?.products ||
         [];
 
-      // ========================================
+      // --------------------------------------------------
       // FILTER VALID PRODUCTS
-      // ========================================
+      // --------------------------------------------------
+      const filteredProducts = Array.isArray(arr)
+        ? arr.filter((item) => {
+            return (
+              item?.Model_number &&
+              String(item.Model_number).trim() !== ""
+            );
+          })
+        : [];
 
-      const filteredProducts =
-        Array.isArray(arr)
-          ? arr.filter((item) => {
-              return (
-                item?.Model_number &&
-                String(
-                  item.Model_number
-                ).trim() !== ""
-              );
-            })
-          : [];
-
-      // ========================================
+      // --------------------------------------------------
       // BRAND-WISE ARRANGEMENT
-      // ========================================
-
+      // --------------------------------------------------
       const arrangedProducts =
         arrangeProductsByBrand(
           filteredProducts
@@ -271,8 +210,11 @@ const AllProducts = () => {
       );
 
       setTimeout(() => {
-        setProducts(
-          arrangedProducts
+        setProducts(arrangedProducts);
+
+        // Every category starts from 10 products
+        setVisibleCount(
+          INITIAL_VISIBLE_COUNT
         );
 
         setLoading(false);
@@ -285,55 +227,78 @@ const AllProducts = () => {
       );
 
       setProducts([]);
+
+      setVisibleCount(
+        INITIAL_VISIBLE_COUNT
+      );
+
       setLoading(false);
       setFade(false);
     }
   };
 
-  // ==========================================
+  // --------------------------------------------------
   // CATEGORY CLICK
-  // ==========================================
-
-  const handleCategoryClick = (
-    tab,
-    index
-  ) => {
+  // --------------------------------------------------
+  const handleCategoryClick = (tab, index) => {
     setActiveTab(tab);
     setActiveIndex(index);
+
+    // Reset to first 10 products
+    setVisibleCount(
+      INITIAL_VISIBLE_COUNT
+    );
 
     fetchProductsByType(tab);
   };
 
-  // ==========================================
+  // --------------------------------------------------
   // INITIAL LOAD
-  // ==========================================
-
+  // --------------------------------------------------
   useEffect(() => {
     if (tabs.length > 0) {
       setActiveTab(tabs[0]);
       setActiveIndex(0);
 
-      fetchProductsByType(
-        tabs[0]
+      setVisibleCount(
+        INITIAL_VISIBLE_COUNT
       );
+
+      fetchProductsByType(tabs[0]);
     }
   }, []);
 
-  // ==========================================
-  // FIRST 20 PRODUCTS
-  // ==========================================
-
+  // --------------------------------------------------
+  // VISIBLE PRODUCTS
+  // --------------------------------------------------
   const visibleProducts = useMemo(() => {
-    return products.slice(0, 20);
-  }, [products]);
+    return products.slice(
+      0,
+      visibleCount
+    );
+  }, [products, visibleCount]);
 
-  // ==========================================
+  // --------------------------------------------------
+  // MORE PRODUCTS
+  // --------------------------------------------------
+  const handleMoreProducts = () => {
+    setVisibleCount((prev) =>
+      Math.min(
+        prev + PRODUCTS_PER_CLICK,
+        products.length
+      )
+    );
+  };
+
+  // --------------------------------------------------
   // PRODUCT DETAILS
-  // ==========================================
-
+  // --------------------------------------------------
   const handlePage = (item) => {
     const id = getProductId(item);
-    const identifier = slugify(item.Product_Name) || id;
+
+    const identifier =
+      slugify(item?.Product_Name || "") ||
+      id;
 
     if (!identifier) return;
 
@@ -345,24 +310,9 @@ const AllProducts = () => {
     );
   };
 
-  // ==========================================
-  // VIEW MORE
-  // ==========================================
-
-  const handleViewMore = () => {
-    navigate("/category", {
-      state: {
-        type: activeTab.type,
-        onlyMainProducts: true,
-        hideAccessories: true,
-      },
-    });
-  };
-
-  // ==========================================
+  // --------------------------------------------------
   // WISHLIST
-  // ==========================================
-
+  // --------------------------------------------------
   const handleWishlist = (
     e,
     item,
@@ -377,9 +327,7 @@ const AllProducts = () => {
 
     if (isWishlisted) {
       dispatch(
-        removeFromWishlist(
-          productId
-        )
+        removeFromWishlist(productId)
       );
 
       if (
@@ -411,18 +359,14 @@ const AllProducts = () => {
     }
   };
 
-  // ==========================================
-  // UI
-  // ==========================================
-
+  // --------------------------------------------------
+  // RETURN
+  // --------------------------------------------------
   return (
     <section className="ecom-products-section">
       <div className="guitar-products-container">
 
-        {/* =================================
-            HEADER
-        ================================= */}
-
+        {/* HEADER */}
         <div className="guitar-section-header">
           <h2 className="guitar-section-heading">
             SHOP MUSICAL ESSENTIALS
@@ -434,38 +378,30 @@ const AllProducts = () => {
           </p>
         </div>
 
-        {/* =================================
-            TABS
-        ================================= */}
-
+        {/* TABS */}
         <div className="guitar-tabs">
-          {tabs.map(
-            (tab, index) => (
-              <button
-                type="button"
-                key={tab.label}
-                className={`guitar-tab-btn ${
-                  activeIndex === index
-                    ? "active"
-                    : ""
-                }`}
-                onClick={() =>
-                  handleCategoryClick(
-                    tab,
-                    index
-                  )
-                }
-              >
-                {tab.label}
-              </button>
-            )
-          )}
+          {tabs.map((tab, index) => (
+            <button
+              type="button"
+              key={tab.label}
+              className={`guitar-tab-btn ${
+                activeIndex === index
+                  ? "active"
+                  : ""
+              }`}
+              onClick={() =>
+                handleCategoryClick(
+                  tab,
+                  index
+                )
+              }
+            >
+              {tab.label}
+            </button>
+          ))}
         </div>
 
-        {/* =================================
-            PRODUCTS
-        ================================= */}
-
+        {/* PRODUCTS */}
         {loading ? (
           <div className="loading-gif-on-product-change">
             <img
@@ -475,7 +411,6 @@ const AllProducts = () => {
           </div>
         ) : visibleProducts.length === 0 ? (
           <div className="no-products">
-
             <img
               src="https://pub-1cfbd62bb18344a08190c13684f63517.r2.dev/274/Gemini_Generated_Image_juv4kfjuv4kfjuv4%201-Photoroom.png"
               alt="No Products Available"
@@ -491,7 +426,6 @@ const AllProducts = () => {
               in this category soon.
               Please check back later.
             </p>
-
           </div>
         ) : (
           <div
@@ -501,7 +435,6 @@ const AllProducts = () => {
                 : "fade-in"
             }`}
           >
-
             {visibleProducts.map(
               (item, index) => {
                 const productId =
@@ -529,11 +462,12 @@ const AllProducts = () => {
                   ) &&
                   wishlistItems.some(
                     (w) =>
-                      (
+                      String(
                         w?.product_id ||
-                        w?._id ||
-                        w?.id
-                      ) === productId
+                          w?._id ||
+                          w?.id
+                      ) ===
+                      String(productId)
                   );
 
                 return (
@@ -548,14 +482,10 @@ const AllProducts = () => {
                     }
                   >
 
-                    {/* =================================
-                        PRODUCT IMAGE
-                    ================================= */}
-
+                    {/* PRODUCT IMAGE */}
                     <div className="ecom-product-img">
 
                       {/* WISHLIST */}
-
                       <button
                         type="button"
                         aria-label={
@@ -585,7 +515,6 @@ const AllProducts = () => {
                       </button>
 
                       {/* PRODUCT IMAGE */}
-
                       <img
                         src={
                           item?.image_01 ||
@@ -600,9 +529,7 @@ const AllProducts = () => {
                         }
                         loading="lazy"
                         onMouseEnter={(e) => {
-                          if (
-                            item?.image_02
-                          ) {
+                          if (item?.image_02) {
                             e.currentTarget.src =
                               item.image_02;
                           }
@@ -618,13 +545,9 @@ const AllProducts = () => {
                             "/no-image.png";
                         }}
                       />
-
                     </div>
 
-                    {/* =================================
-                        PRODUCT INFO
-                    ================================= */}
-
+                    {/* PRODUCT INFO */}
                     <div className="ecom-product-info">
 
                       <h5 className="ecom-brand">
@@ -645,11 +568,10 @@ const AllProducts = () => {
 
                         <span className="ecom-price">
                           MRP ₹
-                          {formatPrice(
-                            mrp
-                          )}
+                          {formatPrice(mrp)}
                         </span>
 
+                        {/* RATING */}
                         {Number(
                           item?.totalReviews ||
                             0
@@ -663,6 +585,7 @@ const AllProducts = () => {
                             ).toFixed(1)}
 
                             {" "}
+
                             (
                             {
                               item?.totalReviews
@@ -671,6 +594,7 @@ const AllProducts = () => {
                           </span>
                         )}
 
+                        {/* OLD PRICE */}
                         {cutPrice > mrp &&
                           mrp > 0 && (
                             <span className="ecom-old-price">
@@ -680,35 +604,36 @@ const AllProducts = () => {
                               )}
                             </span>
                           )}
-
                       </div>
-
                     </div>
-
                   </div>
                 );
               }
             )}
-
           </div>
         )}
 
-        {/* =================================
-            VIEW MORE
-        ================================= */}
+        {/* ==================================================
+            MORE PRODUCTS BUTTON
+        ================================================== */}
 
-        {/* {visibleProducts.length > 0 && (
-          // <div className="guitar-view-more-wrapper">
-          //   <button
-          //     type="button"
-          //     className="guitar-view-more-btn"
-          //     onClick={handleViewMore}
-          //   >
-          //     View More
-          //     <span>→</span>
-          //   </button>
-          // </div>
-        )} */}
+        {!loading &&
+          products.length > visibleCount && (
+            <div className="onstage-more-products-area">
+              <button
+                type="button"
+                className="onstage-more-products-button"
+                onClick={handleMoreProducts}
+                aria-label="Show more products"
+              >
+                <span className="onstage-more-products-text">
+                  More Products
+                </span>
+
+                <MdExpandMore className="onstage-more-products-icon" />
+              </button>
+            </div>
+          )}
 
       </div>
     </section>
