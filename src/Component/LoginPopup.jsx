@@ -1,11 +1,15 @@
 import React, { useEffect } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
-
+import {
+  useNavigate,
+  useLocation,
+} from "react-router-dom";
 
 const LoginPopup = ({ onClose }) => {
   const navigate = useNavigate();
   const location = useLocation();
-  const currentPath = location.pathname.toLowerCase();
+
+  const currentPath =
+    location.pathname.toLowerCase();
 
   const isAuthPage =
     currentPath === "/login" ||
@@ -15,21 +19,36 @@ const LoginPopup = ({ onClose }) => {
   useEffect(() => {
     if (isAuthPage) return;
 
-    const previousOverflow = document.body.style.overflow;
+    const previousOverflow =
+      document.body.style.overflow;
+
     document.body.style.overflow = "hidden";
 
     return () => {
-      document.body.style.overflow = previousOverflow;
+      document.body.style.overflow =
+        previousOverflow;
     };
   }, [isAuthPage]);
 
-  if (isAuthPage) return null;
+  if (isAuthPage) {
+    return null;
+  }
 
   const getGreeting = () => {
     const hour = new Date().getHours();
-    if (hour < 12) return "Good Morning!";
-    if (hour < 17) return "Good Afternoon!";
-    if (hour < 21) return "Good Evening!";
+
+    if (hour < 12) {
+      return "Good Morning!";
+    }
+
+    if (hour < 17) {
+      return "Good Afternoon!";
+    }
+
+    if (hour < 21) {
+      return "Good Evening!";
+    }
+
     return "Good Night!";
   };
 
@@ -44,8 +63,14 @@ const LoginPopup = ({ onClose }) => {
   };
 
   return (
-    <div className="login-popup" onClick={(e) => e.stopPropagation()}>
-      <div className="popup-card" onClick={(e) => e.stopPropagation()}>
+    <div
+      className="login-popup"
+      onClick={(e) => e.stopPropagation()}
+    >
+      <div
+        className="popup-card"
+        onClick={(e) => e.stopPropagation()}
+      >
         <button
           type="button"
           className="close-btn"
@@ -70,10 +95,13 @@ const LoginPopup = ({ onClose }) => {
               className="popup-logo"
             />
 
-            <h2>{getGreeting()}</h2>
+            <h2>
+              {getGreeting()}
+            </h2>
 
             <p className="popup-description">
-              Login to access your cart, wishlist
+              Login to access your cart,
+              wishlist
               <br />
               & exclusive deals
             </p>
@@ -105,3 +133,4 @@ const LoginPopup = ({ onClose }) => {
 };
 
 export default LoginPopup;
+

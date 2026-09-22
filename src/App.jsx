@@ -4,6 +4,7 @@ import {
   Route,
   useLocation,
 } from "react-router-dom";
+
 import { useRef, useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 
@@ -58,39 +59,52 @@ import LoadingIcon from "./Component/LoadingIcon";
 import Contact from "./Pages/Contact";
 import Faq from "./Pages/Faq";
 
-
 function AppContent() {
   const productsRef = useRef(null);
   const popupTimerRef = useRef(null);
+
   const location = useLocation();
   const dispatch = useDispatch();
 
   const { user } = useSelector((state) => state.auth);
+
   const [showPopup, setShowPopup] = useState(false);
   const [pageLoading, setPageLoading] = useState(false);
 
-  const isAdminRoute = location.pathname.toLowerCase().startsWith("/admin");
+  const isAdminRoute = location.pathname
+    .toLowerCase()
+    .startsWith("/admin");
 
   const handleProductsClick = () => {
-    productsRef.current?.scrollIntoView({ behavior: "smooth" });
+    productsRef.current?.scrollIntoView({
+      behavior: "smooth",
+    });
   };
 
+  /* =========================
+     POP NOTIFY
+  ========================= */
 
-  /* POP NOTIFY */
   useEffect(() => {
     const cssLink = document.createElement("link");
     cssLink.rel = "stylesheet";
-    cssLink.href = "https://cdn.jsdelivr.net/gh/lekoala/pop-notify/pop-notify.css";
+    cssLink.href =
+      "https://cdn.jsdelivr.net/gh/lekoala/pop-notify/pop-notify.css";
+
     document.head.appendChild(cssLink);
 
     const iconLink = document.createElement("link");
     iconLink.rel = "stylesheet";
-    iconLink.href = "https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0";
+    iconLink.href =
+      "https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0";
+
     document.head.appendChild(iconLink);
 
     const script = document.createElement("script");
     script.type = "module";
-    script.src = "https://cdn.jsdelivr.net/gh/lekoala/pop-notify@master/pop-notify.min.js";
+    script.src =
+      "https://cdn.jsdelivr.net/gh/lekoala/pop-notify@master/pop-notify.min.js";
+
     document.body.appendChild(script);
 
     script.onload = () => {
@@ -107,12 +121,17 @@ function AppContent() {
 
         window.showNotification = (message, type = "success") => {
           let icon = "check_circle";
+
           if (type === "error") icon = "error";
           if (type === "warning") icon = "warning";
           if (type === "info") icon = "info";
 
-          const notifications = document.querySelectorAll("pn-notification");
-          if (notifications.length >= 3) notifications[0].remove();
+          const notifications =
+            document.querySelectorAll("pn-notification");
+
+          if (notifications.length >= 3) {
+            notifications[0].remove();
+          }
 
           popNotify.notify(message, {
             variant: type,
@@ -124,29 +143,44 @@ function AppContent() {
     };
 
     return () => {
-      if (document.head.contains(cssLink)) document.head.removeChild(cssLink);
-      if (document.head.contains(iconLink)) document.head.removeChild(iconLink);
-      if (document.body.contains(script)) document.body.removeChild(script);
+      if (document.head.contains(cssLink)) {
+        document.head.removeChild(cssLink);
+      }
+
+      if (document.head.contains(iconLink)) {
+        document.head.removeChild(iconLink);
+      }
+
+      if (document.body.contains(script)) {
+        document.body.removeChild(script);
+      }
     };
   }, []);
 
+  /* =========================
+     GET USER
+  ========================= */
 
-  /* GET USER */
   useEffect(() => {
     const getUser = async () => {
       try {
-        const res = await fetch("https://api.onstage.co.in/api/v1/me", {
-          credentials: "include",
-          method: "GET",
-        });
+        const res = await fetch(
+          "https://api.onstage.co.in/api/v1/me",
+          {
+            credentials: "include",
+            method: "GET",
+          }
+        );
 
         const data = await res.json();
 
         if (data?.user) {
-          dispatch(setUser({
-            user: data.user,
-            token: localStorage.getItem("token"),
-          }));
+          dispatch(
+            setUser({
+              user: data.user,
+              token: localStorage.getItem("token"),
+            })
+          );
         }
       } catch (err) {
         console.log("User fetch error:", err);
@@ -156,38 +190,53 @@ function AppContent() {
     getUser();
   }, [dispatch]);
 
+  /* =========================
+     MANUAL LOGIN POPUP
+  ========================= */
 
-  /* MANUAL LOGIN POPUP */
   useEffect(() => {
     window.openLoginPopup = () => {
       const path = location.pathname.toLowerCase();
 
-      if (
-        user ||
+      const isAuthPage =
         path === "/login" ||
         path === "/signup" ||
-        path === "/verify-otp" ||
+        path === "/verify-otp";
+
+      if (
+        user ||
+        isAuthPage ||
         path.startsWith("/admin")
-      ) return;
+      ) {
+        return;
+      }
 
       setShowPopup(true);
     };
 
-    return () => delete window.openLoginPopup;
+    return () => {
+      delete window.openLoginPopup;
+    };
   }, [location.pathname, user]);
 
+  /* =========================
+     PAGE LOADING
+  ========================= */
 
-  /* PAGE LOADING */
   useEffect(() => {
     setPageLoading(true);
 
-    const timer = setTimeout(() => setPageLoading(false), 800);
+    const timer = setTimeout(() => {
+      setPageLoading(false);
+    }, 800);
 
     return () => clearTimeout(timer);
   }, [location.pathname]);
 
+  /* =========================
+     LOGIN POPUP - ONLY ONCE
+  ========================= */
 
-  /* FIRST POPUP - 5 SECONDS */
   useEffect(() => {
     const path = location.pathname.toLowerCase();
 
@@ -196,6 +245,8 @@ function AppContent() {
       path === "/signup" ||
       path === "/verify-otp";
 
+    // Login hai / Auth page hai / Admin hai
+    // to popup nahi dikhana
     if (user || isAuthPage || isAdminRoute) {
       setShowPopup(false);
 
@@ -207,8 +258,22 @@ function AppContent() {
       return;
     }
 
+    // Popup pehle hi dikha chuka hai?
+    const popupShown =
+      localStorage.getItem("loginPopupShown");
+
+    if (popupShown === "true") {
+      return;
+    }
+
+    // Sirf first time 5 second baad popup
     popupTimerRef.current = setTimeout(() => {
       setShowPopup(true);
+
+      // Popup ko permanently shown mark karo
+      localStorage.setItem("loginPopupShown", "true");
+
+      popupTimerRef.current = null;
     }, 5000);
 
     return () => {
@@ -219,37 +284,25 @@ function AppContent() {
     };
   }, [user, location.pathname, isAdminRoute]);
 
+  /* =========================
+     CLOSE POPUP
+  ========================= */
 
-  /* CLOSE → 10 SECONDS → POPUP */
   const handlePopupClose = () => {
-    setShowPopup(false);
+    localStorage.setItem("loginPopupShown", "true");
 
-    if (user) return;
+    setShowPopup(false);
 
     if (popupTimerRef.current) {
       clearTimeout(popupTimerRef.current);
+      popupTimerRef.current = null;
     }
-
-    popupTimerRef.current = setTimeout(() => {
-      const path = window.location.pathname.toLowerCase();
-
-      const isAuthPage =
-        path === "/login" ||
-        path === "/signup" ||
-        path === "/verify-otp";
-
-      if (
-        !user &&
-        !isAuthPage &&
-        !path.startsWith("/admin")
-      ) {
-        setShowPopup(true);
-      }
-    }, 10000);
   };
 
+  /* =========================
+     CLEAR TIMER
+  ========================= */
 
-  /* CLEAR TIMER */
   useEffect(() => {
     return () => {
       if (popupTimerRef.current) {
@@ -258,6 +311,9 @@ function AppContent() {
     };
   }, []);
 
+  /* =========================
+     RETURN
+  ========================= */
 
   return (
     <>
@@ -274,65 +330,191 @@ function AppContent() {
       )}
 
       <Routes>
-        <Route path="/" element={<Home productRef={productsRef} />} />
-        <Route path="/product/:Product_Name" element={<ProductDetails />} />
-        <Route path="/productDetails/:Product_Name" element={<ProductDetails />} />
-        <Route path="/ourProductPage" element={<OurProductCat />} />
+        <Route
+          path="/"
+          element={<Home productRef={productsRef} />}
+        />
+
+        <Route
+          path="/product/:Product_Name"
+          element={<ProductDetails />}
+        />
+
+        <Route
+          path="/productDetails/:Product_Name"
+          element={<ProductDetails />}
+        />
+
+        <Route
+          path="/ourProductPage"
+          element={<OurProductCat />}
+        />
 
         <Route path="/signup" element={<Signup />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/verify-otp" element={<VerifyOTP />} />
 
-        <Route path="/aboutus" element={<AboutUs />} />
-        <Route path="/cart" element={<CartPage />} />
-        <Route path="/wishlist" element={<WishlistPage />} />
-        <Route path="/category" element={<FilterProductByCategoryes />} />
-        <Route path="/address" element={<AddressPage />} />
-        <Route path="/profile" element={<Profile />} />
+        <Route path="/login" element={<Login />} />
+
+        <Route
+          path="/verify-otp"
+          element={<VerifyOTP />}
+        />
+
+        <Route
+          path="/aboutus"
+          element={<AboutUs />}
+        />
+
+        <Route
+          path="/cart"
+          element={<CartPage />}
+        />
+
+        <Route
+          path="/wishlist"
+          element={<WishlistPage />}
+        />
+
+        <Route
+          path="/category"
+          element={<FilterProductByCategoryes />}
+        />
+
+        <Route
+          path="/address"
+          element={<AddressPage />}
+        />
+
+        <Route
+          path="/profile"
+          element={<Profile />}
+        />
 
         <Route path="/orders" element={<AccountLayout />}>
           <Route index element={<MyOrders />} />
-          <Route path="my-orders" element={<MyOrders />} />
-          <Route path="customer-care" element={<CustomerCare />} />
-          <Route path="refund" element={<Refund />} />
-          <Route path="update-password" element={<UpdatePassword />} />
-          <Route path="gift-cards" element={<GiftCards />} />
+
+          <Route
+            path="my-orders"
+            element={<MyOrders />}
+          />
+
+          <Route
+            path="customer-care"
+            element={<CustomerCare />}
+          />
+
+          <Route
+            path="refund"
+            element={<Refund />}
+          />
+
+          <Route
+            path="update-password"
+            element={<UpdatePassword />}
+          />
+
+          <Route
+            path="gift-cards"
+            element={<GiftCards />}
+          />
         </Route>
 
-        <Route path="/search" element={<SearchPage />} />
-        <Route path="/forgot-password" element={<ForgotPassword />} />
-        <Route path="/reset-password" element={<ResetPassword />} />
+        <Route
+          path="/search"
+          element={<SearchPage />}
+        />
 
-        <Route path="/terms" element={<TermsConditions />} />
-        <Route path="/privacy" element={<PrivacyPolicy />} />
-        <Route path="/refund" element={<RefundPolicy />} />
+        <Route
+          path="/forgot-password"
+          element={<ForgotPassword />}
+        />
 
-        <Route path="/contactus" element={<Contact />} />
-        <Route path="/faq" element={<Faq />} />
-        <Route path="/blog-details" element={<BlogDetails />} />
+        <Route
+          path="/reset-password"
+          element={<ResetPassword />}
+        />
+
+        <Route
+          path="/terms"
+          element={<TermsConditions />}
+        />
+
+        <Route
+          path="/privacy"
+          element={<PrivacyPolicy />}
+        />
+
+        <Route
+          path="/refund"
+          element={<RefundPolicy />}
+        />
+
+        <Route
+          path="/contactus"
+          element={<Contact />}
+        />
+
+        <Route
+          path="/faq"
+          element={<Faq />}
+        />
+
+        <Route
+          path="/blog-details"
+          element={<BlogDetails />}
+        />
 
         <Route
           path="/reset-password/:token"
           element={<ChangePasswordFromEmail />}
         />
 
-        <Route path="/admin" element={<AdminLayout />}>
-          <Route index element={<Dashboard />} />
-          <Route path="dashboard" element={<Dashboard />} />
-          <Route path="orders" element={<AdminOrders />} />
-          <Route path="upload-file" element={<UploadFile />} />
-          <Route path="user-queries" element={<UserQueries />} />
-          <Route path="update-orders" element={<UpdateOrders />} />
-          <Route path="refunded-order" element={<RefundedOrder />} />
+        <Route
+          path="/admin"
+          element={<AdminLayout />}
+        >
+          <Route
+            index
+            element={<Dashboard />}
+          />
+
+          <Route
+            path="dashboard"
+            element={<Dashboard />}
+          />
+
+          <Route
+            path="orders"
+            element={<AdminOrders />}
+          />
+
+          <Route
+            path="upload-file"
+            element={<UploadFile />}
+          />
+
+          <Route
+            path="user-queries"
+            element={<UserQueries />}
+          />
+
+          <Route
+            path="update-orders"
+            element={<UpdateOrders />}
+          />
+
+          <Route
+            path="refunded-order"
+            element={<RefundedOrder />}
+          />
         </Route>
       </Routes>
 
       <Footer />
+
       <WhatsappChat />
     </>
   );
 }
-
 
 function App() {
   return (
