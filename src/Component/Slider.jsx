@@ -26,7 +26,7 @@ export default function Slider() {
     },
     {
       id: 3,
-      product_id: 1130,
+      product_id: 1927,
       desktop:
         "https://pub-d5d786d675024a039884449faea17b9e.r2.dev/MPC%20Key%2037%20G2/WhatsApp%20Image%202026-07-02%20at%206.02.19%20PM.jpeg",
       mobile:
@@ -34,7 +34,7 @@ export default function Slider() {
     },
     {
       id: 4,
-      product_id: 1513,
+      product_id: 1926,
       desktop:
         "https://pub-d5d786d675024a039884449faea17b9e.r2.dev/numark%20party%20mix%20iii.jpg%20(1).jpeg",
       mobile:
