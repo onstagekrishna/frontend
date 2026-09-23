@@ -9,6 +9,15 @@ export default function Slider() {
   const slides = [
     {
       id: 1,
+      product_id: 1942,
+      desktop:
+        "https://pub-d5d786d675024a039884449faea17b9e.r2.dev/turbo%20pro.jpg.jpeg",
+      mobile:
+        "https://pub-8fb728ccc32b4c72a6f05fff3cf3d811.r2.dev/turbo%20pro%20mobile.jpg.jpeg",
+    },
+
+    {
+      id: 2,
       product_id: 1129,
       desktop:
         "https://pub-d5d786d675024a039884449faea17b9e.r2.dev/MPC%20Key%2037%20G2/MPC%20One%20Gen.jpeg",
@@ -16,7 +25,7 @@ export default function Slider() {
         "https://pub-d5d786d675024a039884449faea17b9e.r2.dev/MPC%20Key%2037%20G2/Mobile%20MPC%20one%20G2.jpg.jpeg",
     },
     {
-      id: 2,
+      id: 3,
       product_id: 1130,
       desktop:
         "https://pub-d5d786d675024a039884449faea17b9e.r2.dev/MPC%20Key%2037%20G2/WhatsApp%20Image%202026-07-02%20at%206.02.19%20PM.jpeg",
@@ -24,7 +33,7 @@ export default function Slider() {
         "https://pub-d5d786d675024a039884449faea17b9e.r2.dev/Mobile%20MPC%20key%2037%20g2.jpg.jpeg",
     },
     {
-      id: 3,
+      id: 4,
       product_id: 1513,
       desktop:
         "https://pub-d5d786d675024a039884449faea17b9e.r2.dev/numark%20party%20mix%20iii.jpg%20(1).jpeg",
@@ -32,7 +41,7 @@ export default function Slider() {
         "https://pub-d5d786d675024a039884449faea17b9e.r2.dev/mobile%20party%20mix%20III.jpg.jpeg",
     },
     {
-      id: 4,
+      id: 5,
       product_id: 1512,
       desktop:
         "https://pub-d5d786d675024a039884449faea17b9e.r2.dev/mixtrack%20go.jpg.jpeg",
