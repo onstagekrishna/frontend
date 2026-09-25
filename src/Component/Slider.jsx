@@ -9,7 +9,7 @@ export default function Slider() {
   const slides = [
     {
       id: 1,
-      product_id: 1942,
+      product_id:46,
       desktop:
         "https://pub-d5d786d675024a039884449faea17b9e.r2.dev/turbo%20pro.jpg.jpeg",
       mobile:
@@ -18,7 +18,7 @@ export default function Slider() {
 
     {
       id: 2,
-      product_id: 1129,
+      product_id:26,
       desktop:
         "https://pub-d5d786d675024a039884449faea17b9e.r2.dev/MPC%20Key%2037%20G2/MPC%20One%20Gen.jpeg",
       mobile:
@@ -26,7 +26,7 @@ export default function Slider() {
     },
     {
       id: 3,
-      product_id: 1927,
+      product_id:27,
       desktop:
         "https://pub-d5d786d675024a039884449faea17b9e.r2.dev/MPC%20Key%2037%20G2/WhatsApp%20Image%202026-07-02%20at%206.02.19%20PM.jpeg",
       mobile:
@@ -34,7 +34,7 @@ export default function Slider() {
     },
     {
       id: 4,
-      product_id: 1926,
+      product_id:648,
       desktop:
         "https://pub-d5d786d675024a039884449faea17b9e.r2.dev/numark%20party%20mix%20iii.jpg%20(1).jpeg",
       mobile:
@@ -42,7 +42,7 @@ export default function Slider() {
     },
     {
       id: 5,
-      product_id: 1512,
+      product_id:647,
       desktop:
         "https://pub-d5d786d675024a039884449faea17b9e.r2.dev/mixtrack%20go.jpg.jpeg",
       mobile:
